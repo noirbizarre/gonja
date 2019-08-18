@@ -26,7 +26,6 @@ _testmain.go
 .project
 EBNF.txt
 test1.tpl
-pongo2_internal_test.go
 tpl-error.out
 /count.out
 /cover.out
@@ -34,9 +33,6 @@ tpl-error.out
 *.iml
 /cpu.out
 /mem.out
-/pongo2.test
 *.error
 /profile
 /coverage.out
-/pongo2_internal_test.ignore
-go.sum
