@@ -1,0 +1,9 @@
+<ul class="browser">
+  <li class="odd">1</li>
+  <li class="even">2</li>
+  <li class="odd">3</li>
+  <li class="even">1</li>
+  <li class="odd">2</li>
+  <li class="even">3</li>
+  <li class="odd">4</li>
+</ul>

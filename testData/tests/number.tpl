@@ -1,0 +1,10 @@
+{{ 42 is number }}
+{{ 42.0 is number }}
+{{ 'gonja' is number }}
+{{ number is number }}
+{{ simple.number is number }}
+{{ simple.uint is number }}
+{{ simple.float is number }}
+{{ simple.nil is number }}
+{{ simple.str is number }}
+{{ None is number }}

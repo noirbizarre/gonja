@@ -1,0 +1,5 @@
+['foo', 'bar', 'foobar']
+['foo', 'bar', 'foobar', 'FooBar']
+[1, 2, 3]
+[1, 2, 3]
+[{'value': 1}, {'value': 2}, {'value': 3}]

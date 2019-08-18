@@ -1,0 +1,9 @@
+o/foo: True
+foo/foo: True
+b/foo: False
+1/(1,2): True
+3/(1,2): False
+1/[1,2]: True
+3/[1,2]: False
+foo/{"foo": 1}: True
+baz/{"bar": 1}: False

@@ -1,0 +1,71 @@
+sort the dict by key, case insensitive
+a: a
+B: B
+c: c
+D: D
+e: e
+F: F
+
+
+sort the dict by key, case insensitive, reverse order
+F: F
+e: e
+D: D
+c: c
+B: B
+a: a
+
+
+sort the dict by key, case sensitive
+B: B
+D: D
+F: F
+a: a
+c: c
+e: e
+
+
+sort the dict by key, case sensitive, reverse order
+e: e
+c: c
+a: a
+F: F
+D: D
+B: B
+
+
+sort the dict by value, case insensitive
+a: a
+B: B
+c: c
+D: D
+e: e
+F: F
+
+
+sort the dict by value, case insensitive, reverse order
+F: F
+e: e
+D: D
+c: c
+B: B
+a: a
+
+
+sort the dict by value, case sensitive
+B: B
+D: D
+F: F
+a: a
+c: c
+e: e
+
+
+sort the dict by value, case sensitive, reverse order
+e: e
+c: c
+a: a
+F: F
+D: D
+B: B
+

@@ -1,0 +1,1 @@
+{{ dict(foo='bar') }}
