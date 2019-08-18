@@ -2,6 +2,7 @@ package gonja
 
 import (
 	"io/ioutil"
+	"sync"
 
 	"github.com/goph/emperror"
 
@@ -14,12 +15,16 @@ import (
 type Environment struct {
 	*exec.EvalConfig
 	Loader loaders.Loader
+
+	Cache      map[string]*exec.Template
+	CacheMutex sync.Mutex
 }
 
 func NewEnvironment(cfg *config.Config, loader loaders.Loader) *Environment {
 	env := &Environment{
 		EvalConfig: exec.NewEvalConfig(cfg),
 		Loader:     loader,
+		Cache:      map[string]*exec.Template{},
 	}
 	env.EvalConfig.Loader = env
 	env.Filters.Update(builtins.Filters)
@@ -32,42 +37,55 @@ func NewEnvironment(cfg *config.Config, loader loaders.Loader) *Environment {
 	return env
 }
 
-// // FromCache is a convenient method to cache templates. It is thread-safe
-// // and will only compile the template associated with a filename once.
-// // If Environment.Debug is true (for example during development phase),
-// // FromCache() will not cache the template and instead recompile it on any
-// // call (to make changes to a template live instantaneously).
-// func (env *Environment) FromCache(filename string) (*Template, error) {
-// 	if env.Config.Debug {
-// 		// Recompile on any request
-// 		return env.FromFile(filename)
-// 	}
-// 	// Cache the template
-// 	cleanedFilename := env.resolveFilename(nil, filename)
+// CleanCache cleans the template cache. If filenames is not empty,
+// it will remove the template caches of those filenames.
+// Or it will empty the whole template cache. It is thread-safe.
+func (env *Environment) CleanCache(filenames ...string) {
+	env.CacheMutex.Lock()
+	defer env.CacheMutex.Unlock()
 
-// 	env.templateCacheMutex.Lock()
-// 	defer env.templateCacheMutex.Unlock()
+	if len(filenames) == 0 {
+		env.Cache = map[string]*exec.Template{}
+	}
 
-// 	tpl, has := env.templateCache[cleanedFilename]
+	for _, filename := range filenames {
+		delete(env.Cache, filename)
+	}
+}
 
-// 	// Cache miss
-// 	if !has {
-// 		tpl, err := env.FromFile(cleanedFilename)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		env.templateCache[cleanedFilename] = tpl
-// 		return tpl, nil
-// 	}
+// FromCache is a convenient method to cache templates. It is thread-safe
+// and will only compile the template associated with a filename once.
+// If Environment.Debug is true (for example during development phase),
+// FromCache() will not cache the template and instead recompile it on any
+// call (to make changes to a template live instantaneously).
+func (env *Environment) FromCache(filename string) (*exec.Template, error) {
+	if env.Config.Debug {
+		// Recompile on any request
+		return env.FromFile(filename)
+	}
 
-// 	// Cache hit
-// 	return tpl, nil
-// }
+	env.CacheMutex.Lock()
+	defer env.CacheMutex.Unlock()
+
+	tpl, has := env.Cache[filename]
+
+	// Cache miss
+	if !has {
+		tpl, err := env.FromFile(filename)
+		if err != nil {
+			return nil, err
+		}
+		env.Cache[filename] = tpl
+		return tpl, nil
+	}
+
+	// Cache hit
+	return tpl, nil
+}
 
 // FromString loads a template from string and returns a Template instance.
 func (env *Environment) FromString(tpl string) (*exec.Template, error) {
 	return exec.NewTemplate("string", tpl, env.EvalConfig)
-	// return newTemplateString(env, []byte(tpl))
 }
 
 // FromBytes loads a template from bytes and returns a Template instance.
