@@ -12,6 +12,7 @@ install:
   - go mod download
   - go get github.com/rakyll/gotest
 script:
+  - CI=travis
   - COVER_PKGS=$(go list ./... | grep -v testutils | tr '\n' ',')
   - gotest -race -v ./... -tags integration -coverpkg=$COVER_PKGS -covermode=atomic -coverprofile=coverage.out -bench . -cpu 1,4
 after_success:
