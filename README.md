@@ -2,7 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/noirbizarre/gonja?status.svg)](https://godoc.org/github.com/noirbizarre/gonja)
 [![Build Status](https://travis-ci.org/noirbizarre/gonja.svg?branch=master)](https://travis-ci.org/noirbizarre/gonja)
-[![Coverage Status](https://coveralls.io/repos/noirbizarre/gonja/badge.svg?branch=master)](https://coveralls.io/r/noirbizarre/gonja?branch=master)
+[![Coverage Status](https://codecov.io/gh/noirbizarre/gonja/branch/master/graph/badge.svg)](https://codecov.io/gh/noirbizarre/gonja)
 
 `gonja` is [`pongo2`](https://github.com/flosch/pongo2) fork intended to be aligned on `Jinja` template syntax instead of the `Django` one.
 
