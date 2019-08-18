@@ -12,6 +12,7 @@ install:
   - go mod download
   - go get github.com/mattn/goveralls
 script:
-  - go test -v ./... -tags integration -coverpkg=./... -covermode=count -coverprofile=coverage.out -bench . -cpu 1,4
+  - COVER_PKGS=$(go list ./... | grep -v testutils | tr '\n' ',')
+  - go test -v ./... -tags integration -coverpkg=$COVER_PKGS -covermode=count -coverprofile=coverage.out -bench . -cpu 1,4
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN || true'
