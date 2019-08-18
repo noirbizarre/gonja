@@ -17,60 +17,32 @@ type TemplateLoader interface {
 }
 
 type Template struct {
-
-	// Input
-	// isTplString bool
 	Name   string
 	Reader io.Reader
 	Source string
-	// Config *config.Config
-	// size        int
 
 	Env    *EvalConfig
 	Loader TemplateLoader
 
-	// Calculation
-	// tokens []*Token
 	Tokens *tokens.Stream
 	Parser *parser.Parser
 
-	Root *nodes.Template
-	// Parent *Template
-	// Blocks map[string]*nodes.Wrapper
+	Root   *nodes.Template
 	Macros MacroSet
-
-	// first come, first serve (it's important to not override existing entries in here)
-	// level          int
-	// parent         *Template
-	// child          *Template
-	// blocks         map[string]*NodeWrapper
-	// exportedMacros map[string]*MacroStmt
-
-	// // Output
-	// root *nodeDocument
 }
-
-// func newTemplateString(env *Environment, tpl []byte) (*Template, error) {
-// 	return newTemplate(env, "<string>", true, tpl)
-// }
 
 func NewTemplate(name string, source string, cfg *EvalConfig) (*Template, error) {
 	// Create the template
 	t := &Template{
-		Env: cfg,
-		// isTplString: isTplString,
+		Env:    cfg,
 		Name:   name,
 		Source: source,
 		Tokens: tokens.Lex(source),
-		// Config: cfg,
-		// size:           len(strTpl),
-		// blocks:         make(map[string]*NodeWrapper),
-		// exportedMacros: make(map[string]*MacroStmt),
 	}
 
 	// Parse it
 	t.Parser = parser.NewParser(name, cfg.Config, t.Tokens)
-	t.Parser.Statements = *t.Env.Statements //.Parsers()
+	t.Parser.Statements = *t.Env.Statements
 	t.Parser.TemplateParser = t.Env.GetTemplate
 	root, err := t.Parser.Parse()
 	if err != nil {
@@ -96,10 +68,6 @@ func (tpl *Template) execute(ctx map[string]interface{}, out io.StringWriter) er
 
 	return nil
 }
-
-// func (tpl *Template) newTemplateWriterAndExecute(ctx *Context, writer io.Writer) error {
-// 	return tpl.execute(ctx, &templateWriter{w: writer})
-// }
 
 func (tpl *Template) newBufferAndExecute(ctx map[string]interface{}) (*bytes.Buffer, error) {
 	var buffer bytes.Buffer
@@ -138,7 +106,6 @@ func (tpl *Template) newBufferAndExecute(ctx map[string]interface{}) (*bytes.Buf
 
 // Executes the template and returns the rendered template as a []byte
 func (tpl *Template) ExecuteBytes(ctx map[string]interface{}) ([]byte, error) {
-	// Execute template
 	buffer, err := tpl.newBufferAndExecute(ctx)
 	if err != nil {
 		return nil, err
@@ -150,12 +117,9 @@ func (tpl *Template) ExecuteBytes(ctx map[string]interface{}) ([]byte, error) {
 func (tpl *Template) Execute(ctx map[string]interface{}) (string, error) {
 	var b strings.Builder
 	err := tpl.execute(ctx, &b)
-	// Execute template
-	// buffer, err := tpl.newBufferAndExecute(ctx)
 	if err != nil {
 		return "", err
 	}
 
 	return b.String(), nil
-
 }

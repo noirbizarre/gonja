@@ -17,7 +17,7 @@ func BenchmarkFromCache(b *testing.B) {
 		if err != nil {
 			b.Fatal(err)
 		}
-		_, err = tpl.ExecuteBytes(tu.Fixtures)
+		_, err = tpl.Execute(tu.Fixtures)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -30,7 +30,7 @@ func BenchmarkFromFile(b *testing.B) {
 		if err != nil {
 			b.Fatal(err)
 		}
-		_, err = tpl.ExecuteBytes(tu.Fixtures)
+		_, err = tpl.Execute(tu.Fixtures)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -44,7 +44,7 @@ func BenchmarkExecute(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = tpl.ExecuteBytes(tu.Fixtures)
+		_, err = tpl.Execute(tu.Fixtures)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -64,7 +64,7 @@ func BenchmarkCompileAndExecute(b *testing.B) {
 			b.Fatal(err)
 		}
 
-		_, err = tpl.ExecuteBytes(tu.Fixtures)
+		_, err = tpl.Execute(tu.Fixtures)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -79,7 +79,7 @@ func BenchmarkParallelExecute(b *testing.B) {
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_, err := tpl.ExecuteBytes(tu.Fixtures)
+			_, err := tpl.Execute(tu.Fixtures)
 			if err != nil {
 				b.Fatal(err)
 			}

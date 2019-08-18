@@ -2,6 +2,7 @@ package gonja
 
 import (
 	"github.com/noirbizarre/gonja/config"
+	"github.com/noirbizarre/gonja/exec"
 	"github.com/noirbizarre/gonja/loaders"
 )
 
@@ -21,3 +22,13 @@ var (
 	// Globals for the default set
 	Globals = DefaultEnv.Globals
 )
+
+// Must panics, if a Template couldn't successfully parsed. This is how you
+// would use it:
+//     var baseTemplate = gonja.Must(gonja.FromFile("templates/base.html"))
+func Must(tpl *exec.Template, err error) *exec.Template {
+	if err != nil {
+		panic(err)
+	}
+	return tpl
+}

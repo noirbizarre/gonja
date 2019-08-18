@@ -90,13 +90,11 @@ func (env *Environment) FromString(tpl string) (*exec.Template, error) {
 
 // FromBytes loads a template from bytes and returns a Template instance.
 func (env *Environment) FromBytes(tpl []byte) (*exec.Template, error) {
-	// return newTemplateString(env, tpl)
 	return exec.NewTemplate("bytes", string(tpl), env.EvalConfig)
 }
 
 // FromFile loads a template from a filename and returns a Template instance.
 func (env *Environment) FromFile(filename string) (*exec.Template, error) {
-	// fd, err := env.Loader.Get(env.resolveFilename(nil, filename))
 	fd, err := env.Loader.Get(filename)
 	if err != nil {
 		return nil, emperror.With(err, "filename", filename)
@@ -106,18 +104,9 @@ func (env *Environment) FromFile(filename string) (*exec.Template, error) {
 		return nil, emperror.With(err, "filename", filename)
 	}
 
-	// return newTemplate(env, filename, false, buf)
 	return exec.NewTemplate(filename, string(buf), env.EvalConfig)
 }
 
 func (env *Environment) GetTemplate(filename string) (*exec.Template, error) {
 	return env.FromFile(filename)
 }
-
-// func (env *Environment) ParseTemplate(filename string) (*nodes.Template, error) {
-// 	tpl, err := env.FromFile(filename)
-// 	if err != nil {
-// 		return nil, errors.Wrapf(err, `Unable to parse template "%s"`, filename)
-// 	}
-// 	return tpl.Root, nil
-// }
