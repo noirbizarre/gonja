@@ -1,22 +1,17 @@
-# [pongo](https://en.wikipedia.org/wiki/Pongo_%28genus%29)2
+# Gonja
 
-[![Join the chat at https://gitter.im/noirbizarre/gonja](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/noirbizarre/gonja)
 [![GoDoc](https://godoc.org/github.com/noirbizarre/gonja?status.svg)](https://godoc.org/github.com/noirbizarre/gonja)
 [![Build Status](https://travis-ci.org/noirbizarre/gonja.svg?branch=master)](https://travis-ci.org/noirbizarre/gonja)
 [![Coverage Status](https://coveralls.io/repos/noirbizarre/gonja/badge.svg?branch=master)](https://coveralls.io/r/noirbizarre/gonja?branch=master)
-[![gratipay](http://img.shields.io/badge/gratipay-support%20pongo-brightgreen.svg)](https://gratipay.com/flosch/)
-[![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=3654947)](https://www.bountysource.com/trackers/3654947-gonja?utm_source=3654947&utm_medium=shield&utm_campaign=TRACKER_BADGE)
 
-`gonja` is [`gonja`](https://github.com/noirbizarre/gonja) fork intended to be aligned on `Jinja` template syntax instead of the `Django` one.
+`gonja` is [`pongo2`](https://github.com/flosch/pongo2) fork intended to be aligned on `Jinja` template syntax instead of the `Django` one.
 
 Install/update using `go get` (no dependencies required by `gonja`):
 ```
 go get github.com/noirbizarre/gonja
 ```
 
-Please use the [issue tracker](https://github.com/noirbizarre/gonja/issues) if you're encountering any problems with gonja or if you need help with implementing tags or filters ([create a ticket!](https://github.com/noirbizarre/gonja/issues/new)). If possible, please use [playground](https://www.florian-schlachter.de/gonja/) to create a short test case on what's wrong and include the link to the snippet in your issue.
-
-**New**: [Try gonja out in the gonja playground.](https://www.florian-schlachter.de/gonja/)
+Please use the [issue tracker](https://github.com/noirbizarre/gonja/issues) if you're encountering any problems with gonja or if you need help with implementing tags or filters ([create a ticket!](https://github.com/noirbizarre/gonja/issues/new)).
 
 ## First impression of a template
 
