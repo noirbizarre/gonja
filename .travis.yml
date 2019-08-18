@@ -8,6 +8,10 @@ go:
 env:
   global:
     - GO111MODULE=on
+cache:
+  directories:
+    - $HOME/.cache/go-build
+    - $HOME/gopath/pkg/mod
 install:
   - go mod download
   - go get github.com/rakyll/gotest
