@@ -13,7 +13,7 @@ install:
   - go get github.com/mattn/goveralls
 script:
   - COVER_PKGS=$(go list ./... | grep -v testutils | tr '\n' ',')
-  - go test -race -v ./... -tags integration -coverpkg=$COVER_PKGS -covermode=count -coverprofile=coverage.out -bench . -cpu 1,4
+  - go test -race -v ./... -tags integration -coverpkg=$COVER_PKGS -covermode=atomic -coverprofile=coverage.out -bench . -cpu 1,4
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN || true'
   - bash <(curl -s https://codecov.io/bash)
