@@ -99,6 +99,23 @@ func (e *Evaluator) evalBinaryExpression(node *nodes.BinaryExpression) *Value {
 
 	switch node.Operator.Token.Val {
 	case "+":
+		if left.IsList() {
+			if !right.IsList() {
+				return AsValue(errors.Wrapf(right, `Unable to concatenate list to %s`, node.Right))
+			}
+
+			v := &Value{Val: reflect.ValueOf([]interface{}{})}
+
+			for ix := 0; ix < left.getResolvedValue().Len(); ix ++ {
+				v.Val = reflect.Append(v.Val, left.getResolvedValue().Index(ix))
+			}
+
+			for ix := 0; ix < right.getResolvedValue().Len(); ix ++ {
+				v.Val = reflect.Append(v.Val, right.getResolvedValue().Index(ix))
+			}
+
+			return v
+		}
 		if left.IsFloat() || right.IsFloat() {
 			// Result will be a float
 			return AsValue(left.Float() + right.Float())
