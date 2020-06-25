@@ -36,3 +36,6 @@ tpl-error.out
 *.error
 /profile
 /coverage.out
+/coverage.html
+dist/
+trace.out
