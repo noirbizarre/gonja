@@ -14,6 +14,9 @@ jobs:
         with:
           go-version: 1.14
       -
+        name: Install gotest
+        run: go get -u github.com/rakyll/gotest
+      -
         name: Build
         uses: magefile/mage-action@v1
         with:
