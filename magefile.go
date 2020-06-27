@@ -63,6 +63,9 @@ func grep(list []string, test func(string) bool) []string {
 ////
 // Tasks
 ////
+func Clean() error {
+	return run("go clean")
+}
 
 func Test() error {
 	return run("gotest -race -v ./... -tags integration")
