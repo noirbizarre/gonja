@@ -5,6 +5,7 @@ jobs:
     name: Go ${{ matrix.go}} - ${{ matrix.os }}  
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
@@ -13,6 +14,9 @@ jobs:
         go: 
           - 1.13
           - 1.14
+    env:
+      OS: ${{ matrix.os }}
+      GOLANG: ${{ matrix.go }}
     steps:
       - 
         name: Checkout source code
@@ -40,3 +44,5 @@ jobs:
       - 
         name: Send coverage report to Codecov
         uses: codecov/codecov-action@v1
+        with:
+          env_vars: OS,GOLANG
