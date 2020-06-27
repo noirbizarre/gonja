@@ -2,18 +2,23 @@ name: Build and test
 on: [push, pull_request]
 jobs:
   build:
-    name: Build and Test
+    name: Go ${{ matrix.go}} - ${{ matrix.os }}  
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        go: [1.13, 1.14]
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        go: 
+          - 1.13
+          - 1.14
     steps:
       - 
         name: Checkout source code
         uses: actions/checkout@v2
       - 
-        name: Set up Go
+        name: Set up Go ${{ matrix.go }}
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go }}
