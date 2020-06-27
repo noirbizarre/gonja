@@ -14,15 +14,20 @@ jobs:
         with:
           go-version: 1.14
       -
-        name: Install gotest
-        run: go get -u github.com/rakyll/gotest
+        name: Install dependencies
+        run: |
+          go mod download
+          go get -u github.com/rakyll/gotest
       -
         name: Build
         uses: magefile/mage-action@v1
         with:
           args: build
       - 
-        name: Test
+        name: Test with coverage
         uses: magefile/mage-action@v1
         with:
-          args: test
+          args: cover
+      - 
+        name: Send coverage report to Codecov
+        uses: codecov/codecov-action@v1

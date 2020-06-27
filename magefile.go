@@ -81,23 +81,22 @@ func _coverPkg() string {
 }
 
 func Cover() error {
-	cmd := `gotest -race -v ./... -tags integration -cover -coverpkg=%s -covermode=atomic`
+	cmd := `gotest -race -v ./... -tags integration -cover ` +
+		`-coverpkg=%s -covermode=atomic -coverprofile=coverage.out`
 	return run(fmt.Sprintf(cmd, _coverPkg()))
 }
 
 func CoverHtml() error {
-	cmd := `gotest -race -v ./... -tags integration -cover ` +
-		`-coverpkg=%s -covermode=atomic -coverprofile=coverage.out`
-
-	cmd = fmt.Sprintf(cmd, _coverPkg())
-	if err := run(cmd); err != nil {
-		return err
-	}
+	mg.Deps(Cover)
 	return run(`go tool cover -html=coverage.out -o coverage.html`)
 }
 
 func Lint() error {
-	return run("golangci-lint run")
+	if err := run("golangci-lint run"); err != nil {
+		return exit("There is some lints to fix")
+	}
+	success("Code is fine")
+	return nil
 }
 
 func Bench() error {
