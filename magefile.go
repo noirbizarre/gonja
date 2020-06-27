@@ -50,6 +50,16 @@ func exit(str string) error {
 	return mg.Fatalf(-1, "%s %s", Red("✖"), str)
 }
 
+func grep(list []string, test func(string) bool) []string {
+	out := make([]string, 0)
+	for _, line := range list {
+		if test(line) {
+			out = append(out, line)
+		}
+	}
+	return out
+}
+
 ////
 // Tasks
 ////
@@ -58,17 +68,36 @@ func Test() error {
 	return run("gotest -race -v ./... -tags integration")
 }
 
+func _coverPkg() string {
+	out, err := output("go list ./...")
+	if err != nil {
+		exit(err.Error())
+	}
+	pkgs := strings.Split(out, "\n")
+	pkgs = grep(pkgs, func(line string) bool {
+		return !strings.HasSuffix(line, "testutils")
+	})
+	return strings.Join(pkgs, ",")
+}
+
 func Cover() error {
-	// COVER_PKGS=$(go list ./... | grep -v testutils | tr '\n' ',')
-	// gotest -race -v ./... -tags integration -cover -coverpkg=$COVER_PKGS -covermode=atomic
-	return run("gotest -race -v ./... -tags integration")
+	cmd := `gotest -race -v ./... -tags integration -cover -coverpkg=%s -covermode=atomic`
+	return run(fmt.Sprintf(cmd, _coverPkg()))
 }
 
 func CoverHtml() error {
-	// COVER_PKGS=$(go list ./... | grep -v testutils | tr '\n' ',')
-	// gotest -race -v ./... -tags integration -coverpkg=$COVER_PKGS -covermode=atomic -coverprofile=coverage.out
-	// go tool cover -html=coverage.out -o coverage.html
-	return run("gotest -race -v ./... -tags integration")
+	cmd := `gotest -race -v ./... -tags integration -cover ` +
+		`-coverpkg=%s -covermode=atomic -coverprofile=coverage.out`
+
+	cmd = fmt.Sprintf(cmd, _coverPkg())
+	if err := run(cmd); err != nil {
+		return err
+	}
+	return run(`go tool cover -html=coverage.out -o coverage.html`)
+}
+
+func Lint() error {
+	return run("golangci-lint run")
 }
 
 func Bench() error {
@@ -76,7 +105,7 @@ func Bench() error {
 }
 
 func Build() error {
-	err := run("go build")
+	err := run("go build -v")
 	if err != nil {
 		return exit("Build failed")
 	}
