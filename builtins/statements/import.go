@@ -236,6 +236,6 @@ func fromParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) 
 }
 
 func init() {
-	All.Register("import", importParser)
-	All.Register("from", fromParser)
+	All.MustRegister("import", importParser)
+	All.MustRegister("from", fromParser)
 }

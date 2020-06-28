@@ -48,7 +48,9 @@ func (node *FilterStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) err
 		}
 	}
 
-	r.WriteString(value.String())
+	if _, err = r.WriteString(value.String()); err != nil {
+		return errors.Wrap(err, `Unable to execute filter chain`)
+	}
 
 	return nil
 }
@@ -85,5 +87,5 @@ func filterParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error
 }
 
 func init() {
-	All.Register("filter", filterParser)
+	All.MustRegister("filter", filterParser)
 }

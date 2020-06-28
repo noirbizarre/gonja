@@ -68,5 +68,5 @@ func extendsParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, erro
 }
 
 func init() {
-	All.Register("extends", extendsParser)
+	All.MustRegister("extends", extendsParser)
 }

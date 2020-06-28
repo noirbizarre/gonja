@@ -8,6 +8,7 @@ import (
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
+	"github.com/pkg/errors"
 )
 
 type WidthRatioStmt struct {
@@ -42,7 +43,9 @@ func (stmt *WidthRatioStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock)
 	value := int(math.Ceil(current.Float()/max.Float()*width.Float() + 0.5))
 
 	if stmt.ctxName == "" {
-		r.WriteString(fmt.Sprintf("%d", value))
+		if _, err := r.WriteString(fmt.Sprintf("%d", value)); err != nil {
+			return errors.Wrap(err, `Unable to execute 'widthratio' statement`)
+		}
 	} else {
 		r.Ctx.Set(stmt.ctxName, value)
 	}
@@ -90,5 +93,5 @@ func widthratioParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, e
 }
 
 func init() {
-	All.Register("widthratio", widthratioParser)
+	All.MustRegister("widthratio", widthratioParser)
 }

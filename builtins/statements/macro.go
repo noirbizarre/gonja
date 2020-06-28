@@ -29,53 +29,53 @@ func (stmt *MacroStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) erro
 	return nil
 }
 
-func (node *MacroStmt) call(ctx *exec.Context, args ...*exec.Value) *exec.Value {
-	// argsCtx := make(exec.Context)
+// func (node *MacroStmt) call(ctx *exec.Context, args ...*exec.Value) *exec.Value {
+// 	// argsCtx := make(exec.Context)
 
-	// for k, v := range node.args {
-	// 	if v == nil {
-	// 		// User did not provided a default value
-	// 		argsCtx[k] = nil
-	// 	} else {
-	// 		// Evaluate the default value
-	// 		valueExpr, err := v.Evaluate(ctx)
-	// 		if err != nil {
-	// 			ctx.Logf(err.Error())
-	// 			return AsSafeValue(err.Error())
-	// 		}
+// 	// for k, v := range node.args {
+// 	// 	if v == nil {
+// 	// 		// User did not provided a default value
+// 	// 		argsCtx[k] = nil
+// 	// 	} else {
+// 	// 		// Evaluate the default value
+// 	// 		valueExpr, err := v.Evaluate(ctx)
+// 	// 		if err != nil {
+// 	// 			ctx.Logf(err.Error())
+// 	// 			return AsSafeValue(err.Error())
+// 	// 		}
 
-	// 		argsCtx[k] = valueExpr
-	// 	}
-	// }
+// 	// 		argsCtx[k] = valueExpr
+// 	// 	}
+// 	// }
 
-	// if len(args) > len(node.argsOrder) {
-	// 	// Too many arguments, we're ignoring them and just logging into debug mode.
-	// 	err := ctx.Error(fmt.Sprintf("Macro '%s' called with too many arguments (%d instead of %d).",
-	// 		node.name, len(args), len(node.argsOrder)), nil).updateFromTokenIfNeeded(ctx.template, node.position)
+// 	// if len(args) > len(node.argsOrder) {
+// 	// 	// Too many arguments, we're ignoring them and just logging into debug mode.
+// 	// 	err := ctx.Error(fmt.Sprintf("Macro '%s' called with too many arguments (%d instead of %d).",
+// 	// 		node.name, len(args), len(node.argsOrder)), nil).updateFromTokenIfNeeded(ctx.template, node.position)
 
-	// 	ctx.Logf(err.Error()) // TODO: This is a workaround, because the error is not returned yet to the Execution()-methods
-	// 	return AsSafeValue(err.Error())
-	// }
+// 	// 	ctx.Logf(err.Error()) // TODO: This is a workaround, because the error is not returned yet to the Execution()-methods
+// 	// 	return AsSafeValue(err.Error())
+// 	// }
 
-	// // Make a context for the macro execution
-	// macroCtx := NewChildExecutionContext(ctx)
+// 	// // Make a context for the macro execution
+// 	// macroCtx := NewChildExecutionContext(ctx)
 
-	// // Register all arguments in the private context
-	// macroCtx.Private.Update(argsCtx)
+// 	// // Register all arguments in the private context
+// 	// macroCtx.Private.Update(argsCtx)
 
-	// for idx, argValue := range args {
-	// 	macroCtx.Private[node.argsOrder[idx]] = argValue.Interface()
-	// }
+// 	// for idx, argValue := range args {
+// 	// 	macroCtx.Private[node.argsOrder[idx]] = argValue.Interface()
+// 	// }
 
-	// var b bytes.Buffer
-	// err := node.wrapper.Execute(macroCtx, &b)
-	// if err != nil {
-	// 	return AsSafeValue(err.updateFromTokenIfNeeded(ctx.template, node.position).Error())
-	// }
+// 	// var b bytes.Buffer
+// 	// err := node.wrapper.Execute(macroCtx, &b)
+// 	// if err != nil {
+// 	// 	return AsSafeValue(err.updateFromTokenIfNeeded(ctx.template, node.position).Error())
+// 	// }
 
-	// return AsSafeValue(b.String())
-	return nil
-}
+// 	// return AsSafeValue(b.String())
+// 	return nil
+// }
 
 func macroParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 	stmt := &nodes.Macro{
@@ -157,5 +157,5 @@ func macroParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error)
 }
 
 func init() {
-	All.Register("macro", macroParser)
+	All.MustRegister("macro", macroParser)
 }

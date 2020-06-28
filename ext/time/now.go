@@ -71,7 +71,9 @@ func (stmt *NowStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error 
 		}
 	}
 
-	r.WriteString(now.CFormat(format))
+	if _, err := r.WriteString(now.CFormat(format)); err != nil {
+		return errors.Wrap(err, `Unable to render 'now' statement`)
+	}
 
 	return nil
 }
@@ -158,5 +160,5 @@ func parseTimeOffset(offset string, add bool) (*TimeOffset, error) {
 }
 
 func init() {
-	Statements.Register("now", nowParser)
+	Statements.MustRegister("now", nowParser)
 }

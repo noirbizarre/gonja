@@ -10,6 +10,7 @@ import (
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
+	"github.com/pkg/errors"
 )
 
 type IfChangedStmt struct {
@@ -41,7 +42,9 @@ func (stmt *IfChangedStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) 
 		str := out.String()
 		if stmt.lastContent != str {
 			// Rendered content changed, output it
-			r.WriteString(str)
+			if _, err = r.WriteString(str); err != nil {
+				return errors.Wrap(err, `Unable to execute 'ifchanged' statement`)
+			}
 			stmt.lastContent = str
 		}
 	} else {
@@ -130,5 +133,5 @@ func ifchangedParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, er
 }
 
 func init() {
-	All.Register("ifchanged", ifchangedParser)
+	All.MustRegister("ifchanged", ifchangedParser)
 }

@@ -53,9 +53,9 @@ type BlockInfos struct {
 	Root     *nodes.Template
 }
 
-func (bi *BlockInfos) super() string {
+func (bi *BlockInfos) super() (string, error) {
 	if len(bi.Blocks) <= 0 {
-		return ""
+		return "", errors.New("super() can only be used in child templates")
 	}
 	r := bi.Renderer
 	block, blocks := bi.Blocks[0], bi.Blocks[1:]
@@ -69,8 +69,10 @@ func (bi *BlockInfos) super() string {
 	}
 	sub.Ctx.Set("self", exec.Self(sub))
 	sub.Ctx.Set("super", infos.super)
-	sub.ExecuteWrapper(block)
-	return out.String()
+	if err := sub.ExecuteWrapper(block); err != nil {
+		return "", errors.Wrap(err, "Unable to render parent block")
+	}
+	return out.String(), nil
 }
 
 func blockParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
@@ -78,16 +80,16 @@ func blockParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error)
 		Location: p.Current(),
 	}
 	if args.End() {
-		return nil, errors.New("Tag 'block' requires an identifier.")
+		return nil, errors.New("Tag 'block' requires an identifier")
 	}
 
 	name := args.Match(tokens.Name)
 	if name == nil {
-		return nil, errors.New("First argument for tag 'block' must be an identifier.")
+		return nil, errors.New("First argument for tag 'block' must be an identifier")
 	}
 
 	if !args.End() {
-		return nil, errors.New("Tag 'block' takes exactly 1 argument (an identifier).")
+		return nil, errors.New("Tag 'block' takes exactly 1 argument (an identifier)")
 	}
 
 	wrapper, endargs, err := p.WrapUntil("endblock")
@@ -97,21 +99,25 @@ func blockParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error)
 	if !endargs.End() {
 		endName := endargs.Match(tokens.Name)
 		if endName != nil {
-			if endName.Val != endName.Val {
+			if endName.Val != name.Val {
 				return nil, errors.Errorf(`Name for 'endblock' must equal to 'block'-tag's name ('%s' != '%s').`,
 					name.Val, endName.Val)
 			}
 		}
 
 		if endName == nil || !endargs.End() {
-			return nil, errors.New("Either no or only one argument (identifier) allowed for 'endblock'.")
+			return nil, errors.New("Either no or only one argument (identifier) allowed for 'endblock'")
 		}
 	}
 
 	if !p.Template.Blocks.Exists(name.Val) {
-		p.Template.Blocks.Register(name.Val, wrapper)
+		if err = p.Template.Blocks.Register(name.Val, wrapper); err != nil {
+			msg := fmt.Sprintf("Error while registering block named '%s': %s", name.Val, err)
+			return nil, args.Error(msg, block.Location)
+		}
 	} else {
-		return nil, args.Error(fmt.Sprintf("Block named '%s' already defined", name.Val), nil)
+		msg := fmt.Sprintf("Block named '%s' already defined", name.Val)
+		return nil, args.Error(msg, block.Location)
 	}
 
 	block.Name = name.Val
@@ -119,5 +125,5 @@ func blockParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error)
 }
 
 func init() {
-	All.Register("block", blockParser)
+	All.MustRegister("block", blockParser)
 }

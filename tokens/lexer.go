@@ -14,7 +14,6 @@ import (
 
 // EOF is an arbitraty value for End Of File
 const rEOF = -1
-const re_ENDRAW = `%s\s*%s`
 
 var escapedStrings = map[string]string{
 	`\"`: `"`,
@@ -136,11 +135,6 @@ func (l *Lexer) processAndEmit(t Type, fn func(string) string) {
 	l.Start = l.Pos
 }
 
-// ignore skips over the pending input before this point.
-func (l *Lexer) ignore() {
-	l.Start = l.Pos
-}
-
 // backup steps back one rune.
 // Can be called only once per call of next.
 func (l *Lexer) backup() {
@@ -158,18 +152,11 @@ func (l *Lexer) peek() rune {
 // accept consumes the next rune
 // if it's from the valid set.
 func (l *Lexer) accept(valid string) bool {
-	if strings.IndexRune(valid, l.next()) >= 0 {
+	if strings.ContainsRune(valid, l.next()) {
 		return true
 	}
 	l.backup()
 	return false
-}
-
-// acceptRun consumes a run of runes from the valid set.
-func (l *Lexer) acceptRun(valid string) {
-	for strings.IndexRune(valid, l.next()) >= 0 {
-	}
-	l.backup()
 }
 
 func (l *Lexer) pushDelimiter(r rune) {
@@ -310,9 +297,8 @@ func (l *Lexer) lexBlockEnd() lexFn {
 	l.emit(BlockEnd)
 	if l.rawEnd != nil {
 		return l.lexRaw
-	} else {
-		return l.lexData
 	}
+	return l.lexData
 }
 
 func (l *Lexer) lexExpression() lexFn {
@@ -448,7 +434,6 @@ func (l *Lexer) lexExpression() lexFn {
 			l.emit(Rbracket)
 		}
 	}
-	return l.lexData
 }
 
 func (l *Lexer) lexSpace() lexFn {
@@ -520,11 +505,6 @@ func (l *Lexer) lexString() lexFn {
 // isSpace reports whether r is a space character.
 func isSpace(r rune) bool {
 	return r == ' ' || r == '\t'
-}
-
-// isEndOfLine reports whether r is an end-of-line character.
-func isEndOfLine(r rune) bool {
-	return r == '\r' || r == '\n'
 }
 
 // isAlphaNumeric reports whether r is an alphabetic, digit, or underscore.

@@ -20,13 +20,12 @@ package exec
 */
 
 import (
-	// "fmt"
+	"fmt"
 
 	"github.com/pkg/errors"
 
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
-	// "github.com/noirbizarre/gonja/tokens"
 )
 
 // type NodeStatement interface {
@@ -78,6 +77,13 @@ func (ss *StatementSet) Register(name string, parser parser.StatementParser) err
 	// 	parser: parserFn,
 	// }
 	return nil
+}
+
+// Registers a statement and panic on error
+func (ss *StatementSet) MustRegister(name string, parser parser.StatementParser) {
+	if err := ss.Register(name, parser); err != nil {
+		panic(fmt.Sprintf(`Unable to register '%s' statement: %s`, name, err))
+	}
 }
 
 // Replaces an already registered tag with a new implementation. Use this

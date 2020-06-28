@@ -80,5 +80,5 @@ func withParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) 
 }
 
 func init() {
-	All.Register("with", withParser)
+	All.MustRegister("with", withParser)
 }

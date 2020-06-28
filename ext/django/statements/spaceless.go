@@ -9,6 +9,7 @@ import (
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
+	"github.com/pkg/errors"
 )
 
 type SpacelessStmt struct {
@@ -29,9 +30,8 @@ func (stmt *SpacelessStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) 
 
 	sub := r.Inherit()
 	sub.Out = &out
-	err := sub.ExecuteWrapper(stmt.wrapper)
-	if err != nil {
-		return err
+	if err := sub.ExecuteWrapper(stmt.wrapper); err != nil {
+		return errors.Wrap(err, `Unable to execute 'spaceless' statement`)
 	}
 
 	s := out.String()
@@ -43,7 +43,9 @@ func (stmt *SpacelessStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) 
 		s = s2
 	}
 
-	r.WriteString(s)
+	if _, err := r.WriteString(s); err != nil {
+		return errors.Wrap(err, `Unable to execute 'spaceless' statement`)
+	}
 
 	return nil
 }
@@ -67,5 +69,5 @@ func spacelessParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, er
 }
 
 func init() {
-	All.Register("spaceless", spacelessParser)
+	All.MustRegister("spaceless", spacelessParser)
 }

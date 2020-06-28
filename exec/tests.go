@@ -88,7 +88,7 @@ func (e *Evaluator) ExecuteTestByName(name string, in *Value, params *VarArgs) *
 	if !e.Tests.Exists(name) {
 		return AsValue(errors.Errorf(`Test "%s" not found`, name))
 	}
-	test, _ := (*e.Tests)[name]
+	test := (*e.Tests)[name]
 
 	result, err := test(e.Ctx, in, params)
 	if err != nil {

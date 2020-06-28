@@ -26,6 +26,7 @@ func (stmt *ForStmt) String() string {
 	return fmt.Sprintf("ForStmt(Line=%d Col=%d)", t.Line, t.Col)
 }
 
+//nolint:structcheck,unused
 type LoopInfos struct {
 	index      int
 	index0     int
@@ -51,8 +52,8 @@ func (li *LoopInfos) Changed(value *exec.Value) bool {
 	return !same
 }
 
-func (node *ForStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) (forError error) {
-	obj := r.Eval(node.objectEvaluator)
+func (stmt *ForStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) (forError error) {
+	obj := r.Eval(stmt.objectEvaluator)
 	if obj.IsError() {
 		return obj
 	}
@@ -68,29 +69,29 @@ func (node *ForStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) (forEr
 
 		// There's something to iterate over (correct type and at least 1 item)
 		// Update loop infos and public context
-		if node.value != "" && !key.IsString() && key.Len() == 2 {
+		if stmt.value != "" && !key.IsString() && key.Len() == 2 {
 			key.Iterate(func(idx, count int, key, value *exec.Value) bool {
 				switch idx {
 				case 0:
-					ctx.Set(node.key, key)
+					ctx.Set(stmt.key, key)
 					pair.Key = key
 				case 1:
-					ctx.Set(node.value, key)
+					ctx.Set(stmt.value, key)
 					pair.Value = key
 				}
 				return true
 			}, func() {})
 		} else {
-			ctx.Set(node.key, key)
+			ctx.Set(stmt.key, key)
 			pair.Key = key
 			if value != nil {
-				ctx.Set(node.value, value)
+				ctx.Set(stmt.value, value)
 				pair.Value = value
 			}
 		}
 
-		if node.ifCondition != nil {
-			if !sub.Eval(node.ifCondition).IsTrue() {
+		if stmt.ifCondition != nil {
+			if !sub.Eval(stmt.ifCondition).IsTrue() {
 				return true
 			}
 		}
@@ -98,9 +99,9 @@ func (node *ForStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) (forEr
 		return true
 	}, func() {
 		// Nothing to iterate over (maybe wrong type or no items)
-		if node.emptyWrapper != nil {
+		if stmt.emptyWrapper != nil {
 			sub := r.Inherit()
-			err := sub.ExecuteWrapper(node.emptyWrapper)
+			err := sub.ExecuteWrapper(stmt.emptyWrapper)
 			if err != nil {
 				forError = err
 			}
@@ -118,9 +119,9 @@ func (node *ForStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) (forEr
 		sub := r.Inherit()
 		ctx := sub.Ctx
 
-		ctx.Set(node.key, pair.Key)
+		ctx.Set(stmt.key, pair.Key)
 		if pair.Value != nil {
-			ctx.Set(node.value, pair.Value)
+			ctx.Set(stmt.value, pair.Value)
 		}
 
 		ctx.Set("loop", loop)
@@ -158,7 +159,7 @@ func (node *ForStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) (forEr
 		}
 
 		// Render elements with updated context
-		err := sub.ExecuteWrapper(node.bodyWrapper)
+		err := sub.ExecuteWrapper(stmt.bodyWrapper)
 		if err != nil {
 			return err
 		}
@@ -200,7 +201,7 @@ func forParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 	}
 
 	if args.MatchName("if") != nil {
-		ifCondition, err := args.ParseExpression()
+		var ifCondition, err = args.ParseExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -239,5 +240,5 @@ func forParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 }
 
 func init() {
-	All.Register("for", forParser)
+	All.MustRegister("for", forParser)
 }

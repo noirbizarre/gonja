@@ -17,15 +17,17 @@ func getBlocks(tpl *nodes.Template) map[string]*nodes.Wrapper {
 	return blocks
 }
 
-func Self(r *Renderer) map[string]func() string {
-	blocks := map[string]func() string{}
+func Self(r *Renderer) map[string]func() (string, error) {
+	blocks := map[string]func() (string, error){}
 	for name, block := range getBlocks(r.Root) {
-		blocks[name] = func() string {
+		blocks[name] = func() (string, error) {
 			sub := r.Inherit()
 			var out strings.Builder
 			sub.Out = &out
-			sub.ExecuteWrapper(block)
-			return out.String()
+			if err := sub.ExecuteWrapper(block); err != nil {
+				return "", err
+			}
+			return out.String(), nil
 		}
 	}
 	return blocks

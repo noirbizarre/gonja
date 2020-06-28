@@ -7,6 +7,7 @@ import (
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
+	"github.com/pkg/errors"
 )
 
 type TemplateTagStmt struct {
@@ -32,7 +33,9 @@ var templateTagMapping = map[string]string{
 }
 
 func (node *TemplateTagStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
-	r.WriteString(node.content)
+	if _, err := r.WriteString(node.content); err != nil {
+		return errors.Wrap(err, `Unable to execute 'templatetag' statement`)
+	}
 	return nil
 }
 
@@ -57,5 +60,5 @@ func templateTagParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, 
 }
 
 func init() {
-	All.Register("templatetag", templateTagParser)
+	All.MustRegister("templatetag", templateTagParser)
 }

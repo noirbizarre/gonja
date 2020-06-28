@@ -118,5 +118,5 @@ func includeParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, erro
 }
 
 func init() {
-	All.Register("include", includeParser)
+	All.MustRegister("include", includeParser)
 }

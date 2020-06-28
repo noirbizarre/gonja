@@ -7,6 +7,7 @@ import (
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
+	"github.com/pkg/errors"
 )
 
 type cycleValue struct {
@@ -57,7 +58,9 @@ func (stmt *CycleStatement) Execute(r *exec.Renderer, tag *nodes.StatementBlock)
 		t.value = val
 
 		if !t.node.silent {
-			r.WriteString(val.String())
+			if _, err := r.WriteString(val.String()); err != nil {
+				return errors.Wrap(err, `Unable to execute cycle statement`)
+			}
 		}
 	} else {
 		// Regular call
@@ -71,7 +74,9 @@ func (stmt *CycleStatement) Execute(r *exec.Renderer, tag *nodes.StatementBlock)
 			r.Ctx.Set(stmt.asName, cycleValue)
 		}
 		if !stmt.silent {
-			r.WriteString(val.String())
+			if _, err := r.WriteString(val.String()); err != nil {
+				return errors.Wrap(err, `Unable to execute 'cycle' statement`)
+			}
 		}
 	}
 
@@ -117,5 +122,5 @@ func cycleParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error)
 }
 
 func init() {
-	All.Register("cycle", cycleParser)
+	All.MustRegister("cycle", cycleParser)
 }

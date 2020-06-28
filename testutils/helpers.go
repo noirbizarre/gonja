@@ -65,7 +65,7 @@ func GlobTemplateTests(t *testing.T, root string, env *gonja.Environment) {
 				t.Fatalf("Error on Execute('%s'):\n%s", filename, err.Error())
 			}
 			// rendered = testTemplateFixes.fixIfNeeded(filename, rendered)
-			if bytes.Compare(expected, rendered) != 0 {
+			if !bytes.Equal(expected, rendered) {
 				diff := difflib.UnifiedDiff{
 					A:        difflib.SplitLines(string(expected)),
 					B:        difflib.SplitLines(string(rendered)),
@@ -97,7 +97,7 @@ func GlobErrorTests(t *testing.T, root string) {
 				}
 			}()
 
-			testData, err := ioutil.ReadFile(match)
+			testData, _ := ioutil.ReadFile(match)
 			tests := strings.Split(string(testData), "\n")
 
 			checkFilename := fmt.Sprintf("%s.out", match)
@@ -120,12 +120,12 @@ func GlobErrorTests(t *testing.T, root string) {
 						match, idx+1)
 				}
 
-				tpl, err := env.FromString(test)
+				_, err := env.FromString(test)
 				if err != nil {
 					t.Fatalf("Error on FromString('%s'):\n%s", test, err.Error())
 				}
 
-				tpl, err = env.FromBytes([]byte(test))
+				tpl, err := env.FromBytes([]byte(test))
 				if err != nil {
 					t.Fatalf("Error on FromBytes('%s'):\n%s", test, err.Error())
 				}

@@ -96,5 +96,5 @@ func ifParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 }
 
 func init() {
-	All.Register("if", ifParser)
+	All.MustRegister("if", ifParser)
 }

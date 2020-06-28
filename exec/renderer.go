@@ -102,12 +102,17 @@ func (r *Renderer) WriteString(txt string) (int, error) {
 }
 
 // RenderValue properly render a value
-func (r *Renderer) RenderValue(value *Value) {
+func (r *Renderer) RenderValue(value *Value) error {
 	if r.Autoescape && value.IsString() && !value.Safe {
-		r.WriteString(value.Escaped())
+		if _, err := r.WriteString(value.Escaped()); err != nil {
+			return errors.Wrap(err, "Unable to render value")
+		}
 	} else {
-		r.WriteString(value.String())
+		if _, err := r.WriteString(value.String()); err != nil {
+			return errors.Wrap(err, "Unable to render value")
+		}
 	}
+	return nil
 }
 
 func (r *Renderer) StartTag(trim *nodes.Trim, lstrip bool) {
@@ -138,7 +143,9 @@ func (r *Renderer) Visit(node nodes.Node) (nodes.Visitor, error) {
 		r.Tag(n.Trim, false)
 		return nil, nil
 	case *nodes.Data:
-		r.WriteString(n.Data.Val)
+		if _, err := r.WriteString(n.Data.Val); err != nil {
+			return nil, errors.Wrapf(err, `Unable to render data '%s'`, n.Data)
+		}
 		return nil, nil
 	case *nodes.Output:
 		r.StartTag(n.Trim, false)
@@ -146,7 +153,9 @@ func (r *Renderer) Visit(node nodes.Node) (nodes.Visitor, error) {
 		if value.IsError() {
 			return nil, errors.Wrapf(value, `Unable to render expression '%s'`, n.Expression)
 		}
-		r.RenderValue(value)
+		if err := r.RenderValue(value); err != nil {
+			return nil, errors.Wrapf(err, `Unable to render expression '%s'`, n.Expression)
+		}
 		r.EndTag(n.Trim)
 		return nil, nil
 	case *nodes.StatementBlock:

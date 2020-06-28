@@ -7,6 +7,7 @@ import (
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
+	"github.com/pkg/errors"
 )
 
 type RawStmt struct {
@@ -21,15 +22,9 @@ func (stmt *RawStmt) String() string {
 }
 
 func (stmt *RawStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
-	r.WriteString(stmt.Data.Data.Val)
-	// sub := r.Inherit()
-	// sub.Autoescape = stmt.Autoescape
-
-	// err := sub.ExecuteWrapper(stmt.Wrapper)
-	// if err != nil {
-	// 	return err
-	// }
-
+	if _, err := r.WriteString(stmt.Data.Data.Val); err != nil {
+		return errors.Wrap(err, `Unable to execute raw statement`)
+	}
 	return nil
 }
 
@@ -56,5 +51,5 @@ func rawParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 }
 
 func init() {
-	All.Register("raw", rawParser)
+	All.MustRegister("raw", rawParser)
 }

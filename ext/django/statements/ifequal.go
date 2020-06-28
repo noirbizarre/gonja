@@ -89,5 +89,5 @@ func ifEqualParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, erro
 }
 
 func init() {
-	All.Register("ifequal", ifEqualParser)
+	All.MustRegister("ifequal", ifEqualParser)
 }

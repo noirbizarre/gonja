@@ -61,5 +61,5 @@ func autoescapeParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, e
 }
 
 func init() {
-	All.Register("autoescape", autoescapeParser)
+	All.MustRegister("autoescape", autoescapeParser)
 }

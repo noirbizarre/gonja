@@ -147,7 +147,7 @@ type Token struct {
 func (t Token) String() string {
 	val := t.Val
 	if len(val) > 1000 {
-		val = fmt.Sprintf("%s...%s", val[:10], val[len(val)-5:len(val)])
+		val = fmt.Sprintf("%s...%s", val[:10], val[len(val)-5:])
 	}
 
 	return fmt.Sprintf("<Token[%s] Val='%s' Pos=%d Line=%d Col=%d>",

@@ -58,7 +58,7 @@ func TestWhiteSpace(t *testing.T) {
 				t.Fatalf("Error on Execute('%s'): %s", source, err.Error())
 			}
 			// rendered = testTemplateFixes.fixIfNeeded(match, rendered)
-			if bytes.Compare(expected, rendered) != 0 {
+			if !bytes.Equal(expected, rendered) {
 				diff := difflib.UnifiedDiff{
 					A:        difflib.SplitLines(string(expected)),
 					B:        difflib.SplitLines(string(rendered)),

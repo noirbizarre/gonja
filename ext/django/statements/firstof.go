@@ -8,6 +8,7 @@ import (
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
+	"github.com/pkg/errors"
 )
 
 type FirstofStmt struct {
@@ -29,7 +30,9 @@ func (stmt *FirstofStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) er
 		}
 
 		if val.IsTrue() {
-			r.RenderValue(val)
+			if err := r.RenderValue(val); err != nil {
+				return errors.Wrap(err, `Unable to execute 'firstof' statement`)
+			}
 			return nil
 		}
 	}
@@ -54,5 +57,5 @@ func firstofParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, erro
 }
 
 func init() {
-	All.Register("firstof", firstofParser)
+	All.MustRegister("firstof", firstofParser)
 }
