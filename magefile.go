@@ -15,9 +15,10 @@ const (
 	packageName = "github.com/noirbizarre/gonja"
 )
 
-////
+var Default = All
+
 // Helpers
-////
+//====
 
 // split a single string command into a list of string
 func split(cmd string) (string, []string) {
@@ -29,6 +30,16 @@ func split(cmd string) (string, []string) {
 func run(cmd string) error {
 	var args = strings.Fields(cmd)
 	return sh.RunV(args[0], args[1:]...)
+}
+
+// execute a command with an OK/KO message
+func runOK(cmd string, ok string, ko string) error {
+	err := run(cmd)
+	if err != nil {
+		return exit(ko)
+	}
+	success(ok)
+	return nil
 }
 
 // silently get the output of a command
@@ -63,15 +74,17 @@ func grep(list []string, test func(string) bool) []string {
 	return out
 }
 
-////
 // Tasks
-////
+//====
+
+// Clean the workdir
 func Clean() error {
 	return run("go clean")
 }
 
+// Run the test suite
 func Test() error {
-	return run("gotest -race -v ./... -tags integration")
+	return runOK("gotest -race ./... -tags integration", "Tests succeed", "Tests failed")
 }
 
 func _coverPkg() string {
@@ -86,34 +99,50 @@ func _coverPkg() string {
 	return strings.Join(pkgs, ",")
 }
 
+// Run tests with coverage
 func Cover() error {
-	cmd := `gotest -race -v ./... -tags integration -cover ` +
+	cmd := `gotest -race ./... -tags integration -cover ` +
 		`-coverpkg=%s -covermode=atomic -coverprofile=coverage.out`
-	return run(fmt.Sprintf(cmd, _coverPkg()))
+	return runOK(
+		fmt.Sprintf(cmd, _coverPkg()),
+		"Tests (with coverage) succeed",
+		"Tests (with coverage) failed",
+	)
 }
 
+// Run tests with coverage and generate an HTML report
 func CoverHtml() error {
 	mg.Deps(Cover)
-	return run(`go tool cover -html=coverage.out -o coverage.html`)
+	return runOK(
+		`go tool cover -html=coverage.out -o coverage.html`,
+		`Coverage report generated in coverage.html`,
+		`Coverage report generation failed`,
+	)
 }
 
+// Execute static analysis
 func Lint() error {
-	if err := run("golangci-lint run"); err != nil {
-		return exit("There is some lints to fix")
-	}
-	success("Code is fine")
-	return nil
+	return runOK("golangci-lint run", "Code is fine", "There is some lints to fix 👆")
 }
 
+// Execute the benchmark suite
 func Bench() error {
-	return run("gotest -v -bench . -cpu 1,2,4 -tags bench -run Benchmark")
+	return runOK(
+		`gotest -v -bench . -cpu 1,2,4 -tags bench -run Benchmark`,
+		`Benchmark done`,
+		`Benchmark failed`,
+	)
 }
 
+// Compile code
 func Build() error {
-	err := run("go build -v")
-	if err != nil {
-		return exit("Build failed")
-	}
-	success("Build success")
+	return runOK(`go build -v`, `Build success`, `Build failed`)
+}
+
+// Lint, Build, Test
+func All() error {
+	mg.Deps(Lint)
+	mg.Deps(Build)
+	mg.Deps(Test)
 	return nil
 }
