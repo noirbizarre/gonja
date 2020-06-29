@@ -50,9 +50,8 @@ func (si *sliceIterator) Next() *Token {
 		tok := si.input[si.idx]
 		si.idx++
 		return tok
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func NewStream(input interface{}) *Stream {

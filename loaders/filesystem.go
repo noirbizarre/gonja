@@ -99,26 +99,8 @@ func (fs *FilesystemLoader) Path(name string) (string, error) {
 			return "", err
 		}
 		return filepath.Join(root, name), nil
-	} else {
-		return filepath.Join(fs.root, name), nil
 	}
-
-	// // Our own base dir has always priority; if there's none
-	// // we use the path provided in base.
-	// var err error
-	// if fs.root == "" {
-	// 	if base == "" {
-	// 		base, err = os.Getwd()
-	// 		if err != nil {
-	// 			panic(err)
-	// 		}
-	// 		return filepath.Join(base, name)
-	// 	}
-
-	// 	return filepath.Join(filepath.Dir(base), name)
-	// }
-
-	// return filepath.Join(fs.root, name)
+	return filepath.Join(fs.root, name), nil
 }
 
 // SandboxedFilesystemLoader is still WIP.

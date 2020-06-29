@@ -27,20 +27,20 @@ func (stmt *FilterStmt) String() string {
 	return fmt.Sprintf("FilterStmt(Line=%d Col=%d)", t.Line, t.Col)
 }
 
-func (node *FilterStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
+func (stmt *FilterStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
 	var out strings.Builder
 	sub := r.Inherit()
 	sub.Out = &out
 	// temp := bytes.NewBuffer(make([]byte, 0, 1024)) // 1 KiB size
 
-	err := sub.ExecuteWrapper(node.bodyWrapper)
+	err := sub.ExecuteWrapper(stmt.bodyWrapper)
 	if err != nil {
 		return err
 	}
 
 	value := exec.AsValue(out.String())
 
-	for _, call := range node.filterChain {
+	for _, call := range stmt.filterChain {
 		value = r.Evaluator().ExecuteFilter(call, value)
 		if value.IsError() {
 			return errors.Wrapf(value, `Unable to apply filter %s (Line: %d Col: %d, near %s`,

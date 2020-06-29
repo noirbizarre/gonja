@@ -32,8 +32,8 @@ var templateTagMapping = map[string]string{
 	"closecomment":  "#}",
 }
 
-func (node *TemplateTagStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
-	if _, err := r.WriteString(node.content); err != nil {
+func (stmt *TemplateTagStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
+	if _, err := r.WriteString(stmt.content); err != nil {
 		return errors.Wrap(err, `Unable to execute 'templatetag' statement`)
 	}
 	return nil

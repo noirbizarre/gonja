@@ -14,6 +14,8 @@ var (
 	DefaultEnv = NewEnvironment(config.DefaultConfig, DefaultLoader)
 
 	// Methods on the default set
+	//--
+
 	FromString = DefaultEnv.FromString
 	FromBytes  = DefaultEnv.FromBytes
 	FromFile   = DefaultEnv.FromFile

@@ -23,19 +23,19 @@ func (stmt *IfStmt) String() string {
 	return fmt.Sprintf("IfStmt(Line=%d Col=%d)", t.Line, t.Col)
 }
 
-func (node *IfStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
-	for i, condition := range node.conditions {
+func (stmt *IfStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
+	for i, condition := range stmt.conditions {
 		result := r.Eval(condition)
 		if result.IsError() {
 			return result
 		}
 
 		if result.IsTrue() {
-			return r.ExecuteWrapper(node.wrappers[i])
+			return r.ExecuteWrapper(stmt.wrappers[i])
 		}
 		// Last condition?
-		if len(node.conditions) == i+1 && len(node.wrappers) > i+1 {
-			return r.ExecuteWrapper(node.wrappers[i+1])
+		if len(stmt.conditions) == i+1 && len(stmt.wrappers) > i+1 {
+			return r.ExecuteWrapper(stmt.wrappers[i+1])
 		}
 	}
 	return nil

@@ -1,5 +1,6 @@
 // +build tools
-package gonja
+
+package main
 
 import (
 	_ "github.com/rakyll/gotest"

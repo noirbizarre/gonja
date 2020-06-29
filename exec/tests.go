@@ -93,7 +93,6 @@ func (e *Evaluator) ExecuteTestByName(name string, in *Value, params *VarArgs) *
 	result, err := test(e.Ctx, in, params)
 	if err != nil {
 		return AsValue(errors.Wrapf(err, `Unable to execute test %s`, name))
-	} else {
-		return AsValue(result)
 	}
+	return AsValue(result)
 }

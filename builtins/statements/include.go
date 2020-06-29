@@ -45,9 +45,8 @@ func (stmt *IncludeStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) er
 		if err != nil {
 			if stmt.IgnoreMissing {
 				return nil
-			} else {
-				return errors.Wrapf(err, `Unable to load template '%s'`, filename)
 			}
+			return errors.Wrapf(err, `Unable to load template '%s'`, filename)
 		}
 		sub.Template = included
 		sub.Root = included.Root

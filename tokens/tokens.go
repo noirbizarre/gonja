@@ -64,7 +64,7 @@ const (
 	EOF
 )
 
-// TokenNames maps token types to their human readable name
+// Names maps token types to their human readable name
 var Names = map[Type]string{
 	Error:  "Error",
 	Add:    "Add",

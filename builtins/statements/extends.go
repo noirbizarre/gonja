@@ -23,7 +23,7 @@ func (stmt *ExtendsStmt) String() string {
 	return fmt.Sprintf("ExtendsStmt(Filename=%s Line=%d Col=%d)", stmt.Filename, t.Line, t.Col)
 }
 
-func (node *ExtendsStmt) Execute(r *exec.Renderer) error {
+func (stmt *ExtendsStmt) Execute(r *exec.Renderer) error {
 	return nil
 }
 

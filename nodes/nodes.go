@@ -51,10 +51,10 @@ type Template struct {
 	Parent *Template
 }
 
-func (t *Template) Position() *tokens.Token { return t.Nodes[0].Position() }
-func (t *Template) String() string {
-	tok := t.Position()
-	return fmt.Sprintf("Template(Name=%s Line=%d Col=%d)", t.Name, tok.Line, tok.Col)
+func (tpl *Template) Position() *tokens.Token { return tpl.Nodes[0].Position() }
+func (tpl *Template) String() string {
+	tok := tpl.Position()
+	return fmt.Sprintf("Template(Name=%s Line=%d Col=%d)", tpl.Name, tok.Line, tok.Col)
 }
 
 func (tpl *Template) GetBlocks(name string) []*Wrapper {
@@ -82,10 +82,9 @@ type Data struct {
 
 func (d *Data) Position() *tokens.Token { return d.Data }
 
-// func (c *Comment) End() token.Pos { return token.Pos(int(c.Slash) + len(c.Text)) }
-func (c *Data) String() string {
+func (d *Data) String() string {
 	return fmt.Sprintf("Data(text=%s Line=%d Col=%d)",
-		u.Ellipsis(c.Data.Val, 20), c.Data.Line, c.Data.Col)
+		u.Ellipsis(d.Data.Val, 20), d.Data.Line, d.Data.Col)
 }
 
 // A Comment node represents a single {# #} comment.
@@ -377,7 +376,7 @@ type BinaryExpression struct {
 	Operator *BinOperator
 }
 
-func (b *BinaryExpression) Position() *tokens.Token { return b.Left.Position() }
+func (expr *BinaryExpression) Position() *tokens.Token { return expr.Left.Position() }
 func (expr *BinaryExpression) String() string {
 	t := expr.Position()
 

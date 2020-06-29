@@ -19,37 +19,40 @@ const (
 // Helpers
 ////
 
+// split a single string command into a list of string
 func split(cmd string) (string, []string) {
 	var args = strings.Fields(cmd)
 	return args[0], args[1:]
 }
 
+// execute a command with output on stdout
 func run(cmd string) error {
 	var args = strings.Fields(cmd)
 	return sh.RunV(args[0], args[1:]...)
 }
 
+// silently get the output of a command
 func output(cmd string) (string, error) {
 	var exe, args = split(cmd)
 	return sh.Output(exe, args...)
 }
 
-func coverPkgs() string {
-	return ""
-}
-
+// display a success message
 func success(str string) {
 	fmt.Printf("%s %s \n", Green("✔"), str)
 }
 
+// display a failure message
 func failure(str string) {
 	fmt.Printf("%s %s \n", Red("✖"), str)
 }
 
+// exit with an error message and exit code -1
 func exit(str string) error {
 	return mg.Fatalf(-1, "%s %s", Red("✖"), str)
 }
 
+// filter a list of strings using a test function
 func grep(list []string, test func(string) bool) []string {
 	out := make([]string, 0)
 	for _, line := range list {

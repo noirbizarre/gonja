@@ -15,7 +15,7 @@ import (
 	"github.com/noirbizarre/gonja/tokens"
 )
 
-type TimeOffset struct {
+type Offset struct {
 	Years   int
 	Months  int
 	Days    int
@@ -28,7 +28,7 @@ type NowStmt struct {
 	Location *tokens.Token
 	TZ       string
 	Format   string
-	Offset   *TimeOffset
+	Offset   *Offset
 }
 
 func (stmt *NowStmt) Position() *tokens.Token { return stmt.Location }
@@ -119,7 +119,7 @@ func nowParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 	return stmt, nil
 }
 
-func parseTimeOffset(offset string, add bool) (*TimeOffset, error) {
+func parseTimeOffset(offset string, add bool) (*Offset, error) {
 	pairs := strings.Split(offset, ",")
 	specs := map[string]int{}
 	for _, pair := range pairs {
@@ -134,7 +134,7 @@ func parseTimeOffset(offset string, add bool) (*TimeOffset, error) {
 		}
 		specs[unit] = value
 	}
-	to := &TimeOffset{}
+	to := &Offset{}
 	for unit, value := range specs {
 		if !add {
 			value = -value

@@ -71,6 +71,11 @@ run:
 #   uniq-by-line: true
 
 
+linters:
+  enable:
+    - golint
+
+
 # all available settings of specific linters
 linters-settings:
   govet:

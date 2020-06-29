@@ -14,10 +14,10 @@ import (
 )
 
 var testCases = []struct {
-	name                  string
-	trim_blocks           bool
-	lstrip_blocks         bool
-	keep_trailing_newline bool
+	name                string
+	trimBlocks          bool
+	lstripBlocks        bool
+	keepTrailingNewline bool
 }{
 	{"default", false, false, false},
 	{"trim_blocks", true, false, false},
@@ -40,9 +40,9 @@ func TestWhiteSpace(t *testing.T) {
 			}()
 			cfg := config.NewConfig()
 			env := gonja.NewEnvironment(cfg, gonja.DefaultLoader)
-			env.TrimBlocks = test.trim_blocks
-			env.LstripBlocks = test.lstrip_blocks
-			env.KeepTrailingNewline = test.keep_trailing_newline
+			env.TrimBlocks = test.trimBlocks
+			env.LstripBlocks = test.lstripBlocks
+			env.KeepTrailingNewline = test.keepTrailingNewline
 
 			tpl, err := env.FromFile(source)
 			if err != nil {

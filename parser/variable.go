@@ -29,17 +29,16 @@ func (p *Parser) parseNumber() (nodes.Expression, error) {
 			Val:      i,
 		}
 		return nr, nil
-	} else {
-		f, err := strconv.ParseFloat(t.Val, 64)
-		if err != nil {
-			return nil, p.Error(err.Error(), t)
-		}
-		fr := &nodes.Float{
-			Location: t,
-			Val:      f,
-		}
-		return fr, nil
 	}
+	f, err := strconv.ParseFloat(t.Val, 64)
+	if err != nil {
+		return nil, p.Error(err.Error(), t)
+	}
+	fr := &nodes.Float{
+		Location: t,
+		Val:      f,
+	}
+	return fr, nil
 }
 
 func (p *Parser) parseString() (nodes.Expression, error) {
@@ -157,9 +156,8 @@ func (p *Parser) parseTuple() (nodes.Expression, error) {
 
 	if len(list) > 1 || trailingComa {
 		return &nodes.Tuple{t, list}, nil
-	} else {
-		return expr, nil
 	}
+	return expr, nil
 }
 
 func (p *Parser) parsePair() (*nodes.Pair, error) {

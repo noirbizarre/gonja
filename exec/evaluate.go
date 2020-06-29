@@ -291,17 +291,16 @@ func (e *Evaluator) evalGetitem(node *nodes.Getitem) *Value {
 			// return AsValue(errors.Errorf(`Unable to evaluate %s: item '%s' not found`, node, node.Arg))
 		}
 		return item
-	} else {
-		item, found := value.Getitem(node.Index)
-		if !found {
-			if item.IsError() {
-				return AsValue(errors.Wrapf(item, `Unable to evaluate %s`, node))
-			}
-			return AsValue(nil)
-			// return AsValue(errors.Errorf(`Unable to evaluate %s: item %d not found`, node, node.Index))
-		}
-		return item
 	}
+	item, found := value.Getitem(node.Index)
+	if !found {
+		if item.IsError() {
+			return AsValue(errors.Wrapf(item, `Unable to evaluate %s`, node))
+		}
+		return AsValue(nil)
+		// return AsValue(errors.Errorf(`Unable to evaluate %s: item %d not found`, node, node.Index))
+	}
+	return item
 }
 
 func (e *Evaluator) evalGetattr(node *nodes.Getattr) *Value {
@@ -323,17 +322,16 @@ func (e *Evaluator) evalGetattr(node *nodes.Getattr) *Value {
 			// return AsValue(errors.Errorf(`Unable to evaluate %s: attribute '%s' not found`, node, node.Attr))
 		}
 		return attr
-	} else {
-		item, found := value.Getitem(node.Index)
-		if !found {
-			if item.IsError() {
-				return AsValue(errors.Wrapf(item, `Unable to evaluate %s`, node))
-			}
-			return AsValue(nil)
-			// return AsValue(errors.Errorf(`Unable to evaluate %s: item %d not found`, node, node.Index))
-		}
-		return item
 	}
+	item, found := value.Getitem(node.Index)
+	if !found {
+		if item.IsError() {
+			return AsValue(errors.Wrapf(item, `Unable to evaluate %s`, node))
+		}
+		return AsValue(nil)
+		// return AsValue(errors.Errorf(`Unable to evaluate %s: item %d not found`, node, node.Index))
+	}
+	return item
 }
 
 func (e *Evaluator) evalCall(node *nodes.Call) *Value {

@@ -146,9 +146,8 @@ func importParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error
 		tpl, err := p.TemplateParser(stmt.Filename)
 		if err != nil {
 			return nil, errors.Wrapf(err, `Unable to parse imported template '%s'`, stmt.Filename)
-		} else {
-			stmt.Template = tpl
 		}
+		stmt.Template = tpl
 	}
 
 	return stmt, nil
@@ -227,9 +226,8 @@ func fromParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) 
 		tpl, err := p.TemplateParser(stmt.Filename)
 		if err != nil {
 			return nil, errors.Wrapf(err, `Unable to parse imported template '%s'`, stmt.Filename)
-		} else {
-			stmt.Template = tpl
 		}
+		stmt.Template = tpl
 	}
 
 	return stmt, nil
