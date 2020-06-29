@@ -1,5 +1,7 @@
 module github.com/noirbizarre/gonja
 
+go 1.14
+
 require (
 	github.com/bmuller/arrow v0.0.0-20180318014521-b14bfde8dff2
 	github.com/go-check/check v0.0.0-20180628173108-788fd7840127
