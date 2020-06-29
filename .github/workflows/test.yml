@@ -1,4 +1,4 @@
-name: Test
+name: Tests
 on: [push, pull_request]
 jobs:
 
@@ -14,7 +14,7 @@ jobs:
           version: v1.27
 
   test:
-    name: Test (Go=${{ matrix.go}} OS=${{ matrix.os }})
+    name: Go ${{ matrix.go}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
