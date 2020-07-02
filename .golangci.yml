@@ -84,3 +84,8 @@ linters-settings:
 
     disable:
       - composites
+
+
+issues:
+  max-per-linter: 0
+  max-same: 0
