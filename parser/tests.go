@@ -27,12 +27,14 @@ func (p *Parser) ParseTest(expr nodes.Expression) (nodes.Expression, error) {
 			Kwargs: map[string]nodes.Expression{},
 		}
 
-		arg, err := p.ParseExpression()
-		if err == nil && arg != nil {
-			test.Args = append(test.Args, arg)
+		if p.PeekName("and", "or") == nil {
+			arg, err := p.ParseExpression()
+			if err == nil && arg != nil {
+				test.Args = append(test.Args, arg)
+			}
 		}
 
-		
+
 
 		// // Check for test-argument (2 tokens needed: ':' ARG)
 		// if p.Match(tokens.Lparen) != nil {
