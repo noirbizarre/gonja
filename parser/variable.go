@@ -275,7 +275,11 @@ func (p *Parser) ParseVariable() (nodes.Expression, error) {
 				Node:     variable,
 			}
 			tok := p.Match(tokens.String, tokens.Integer)
-			switch tok.Type {
+			tokenType := tokens.Error
+			if tok != nil {
+				tokenType = tok.Type
+			}
+			switch tokenType {
 			case tokens.String:
 				getitem.Arg = tok.Val
 			case tokens.Integer:
