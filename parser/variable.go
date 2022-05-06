@@ -309,6 +309,11 @@ func (p *Parser) ParseVariable() (nodes.Expression, error) {
 			// }
 
 			for p.Match(tokens.Comma) != nil || p.Match(tokens.Rparen) == nil {
+				// Python allows trailing commas like: f(foo='bar',) - just ignore it
+				if p.Match(tokens.Rparen) != nil {
+					break
+				}
+
 				// TODO: Handle multiple args and kwargs
 				v, err := p.ParseExpression()
 				if err != nil {

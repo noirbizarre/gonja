@@ -1,1 +1,1 @@
-{{ dict(foo='bar') }}
+{{ dict(foo='bar',) }}
