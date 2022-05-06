@@ -1,17 +1,17 @@
 # Gonja
 
-[![GoDoc](https://godoc.org/github.com/noirbizarre/gonja?status.svg)](https://godoc.org/github.com/noirbizarre/gonja)
-[![Build Status](https://travis-ci.org/noirbizarre/gonja.svg?branch=master)](https://travis-ci.org/noirbizarre/gonja)
-[![Coverage Status](https://codecov.io/gh/noirbizarre/gonja/branch/master/graph/badge.svg)](https://codecov.io/gh/noirbizarre/gonja)
+[![GoDoc](https://godoc.org/github.com/paradime-io/gonja?status.svg)](https://godoc.org/github.com/paradime-io/gonja)
+[![Build Status](https://travis-ci.org/paradime-io/gonja.svg?branch=master)](https://travis-ci.org/paradime-io/gonja)
+[![Coverage Status](https://codecov.io/gh/paradime-io/gonja/branch/master/graph/badge.svg)](https://codecov.io/gh/paradime-io/gonja)
 
 `gonja` is [`pongo2`](https://github.com/flosch/pongo2) fork intended to be aligned on `Jinja` template syntax instead of the `Django` one.
 
 Install/update using `go get` (no dependencies required by `gonja`):
 ```
-go get github.com/noirbizarre/gonja
+go get github.com/paradime-io/gonja
 ```
 
-Please use the [issue tracker](https://github.com/noirbizarre/gonja/issues) if you're encountering any problems with gonja or if you need help with implementing tags or filters ([create a ticket!](https://github.com/noirbizarre/gonja/issues/new)).
+Please use the [issue tracker](https://github.com/paradime-io/gonja/issues) if you're encountering any problems with gonja or if you need help with implementing tags or filters ([create a ticket!](https://github.com/paradime-io/gonja/issues/new)).
 
 ## First impression of a template
 
@@ -62,18 +62,18 @@ Please use the [issue tracker](https://github.com/noirbizarre/gonja/issues) if y
 ## Features (and new in gonja)
 
  * Entirely rewritten from the ground-up.
- * [Advanced C-like expressions](https://github.com/noirbizarre/gonja/blob/master/template_tests/expressions.tpl).
- * [Complex function calls within expressions](https://github.com/noirbizarre/gonja/blob/master/template_tests/function_calls_wrapper.tpl).
- * [Easy API to create new filters and tags](http://godoc.org/github.com/noirbizarre/gonja#RegisterFilter) ([including parsing arguments](http://godoc.org/github.com/noirbizarre/gonja#Parser))
+ * [Advanced C-like expressions](https://github.com/paradime-io/gonja/blob/master/template_tests/expressions.tpl).
+ * [Complex function calls within expressions](https://github.com/paradime-io/gonja/blob/master/template_tests/function_calls_wrapper.tpl).
+ * [Easy API to create new filters and tags](http://godoc.org/github.com/paradime-io/gonja#RegisterFilter) ([including parsing arguments](http://godoc.org/github.com/paradime-io/gonja#Parser))
  * Additional features:
-    * Macros including importing macros from other files (see [template_tests/macro.tpl](https://github.com/noirbizarre/gonja/blob/master/template_tests/macro.tpl))
-    * [Template sandboxing](https://godoc.org/github.com/noirbizarre/gonja#TemplateSet) ([directory patterns](http://golang.org/pkg/path/filepath/#Match), banned tags/filters)
+    * Macros including importing macros from other files (see [template_tests/macro.tpl](https://github.com/paradime-io/gonja/blob/master/template_tests/macro.tpl))
+    * [Template sandboxing](https://godoc.org/github.com/paradime-io/gonja#TemplateSet) ([directory patterns](http://golang.org/pkg/path/filepath/#Match), banned tags/filters)
 
 
 ## How you can help
 
- * Write [filters](https://github.com/noirbizarre/gonja/blob/master/builtins/filters.go#L3) / [statements](https://github.com/noirbizarre/gonja/blob/master/builtins/statements.go#L4)
- * Write/improve code tests (use the following command to see what tests are missing: `go test -v -cover -covermode=count -coverprofile=cover.out && go tool cover -html=cover.out` or have a look on [gocover.io/github.com/noirbizarre/gonja](http://gocover.io/github.com/noirbizarre/gonja))
+ * Write [filters](https://github.com/paradime-io/gonja/blob/master/builtins/filters.go#L3) / [statements](https://github.com/paradime-io/gonja/blob/master/builtins/statements.go#L4)
+ * Write/improve code tests (use the following command to see what tests are missing: `go test -v -cover -covermode=count -coverprofile=cover.out && go tool cover -html=cover.out` or have a look on [gocover.io/github.com/paradime-io/gonja](http://gocover.io/github.com/paradime-io/gonja))
  * Write/improve template tests (see the `testData/` directory)
  * Write middleware, libraries and websites using gonja. :-)
 
@@ -81,7 +81,7 @@ Please use the [issue tracker](https://github.com/noirbizarre/gonja/issues) if y
 
 For a documentation on how the templating language works you can [head over to the Jinja documentation](https://jinja.palletsprojects.com). gonja aims to be compatible with it.
 
-You can access gonja's API documentation on [godoc](https://godoc.org/github.com/noirbizarre/gonja).
+You can access gonja's API documentation on [godoc](https://godoc.org/github.com/paradime-io/gonja).
 
 ## Caveats 
 
@@ -117,7 +117,7 @@ fmt.Println(out) // Output: Hello Axel!
 package main
 
 import (
-	"github.com/noirbizarre/gonja"
+	"github.com/paradime-io/gonja"
 	"net/http"
 )
 

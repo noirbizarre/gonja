@@ -3,9 +3,9 @@ package django_test
 import (
 	"testing"
 
-	"github.com/noirbizarre/gonja"
-	"github.com/noirbizarre/gonja/ext/django"
-	tu "github.com/noirbizarre/gonja/testutils"
+	"github.com/paradime-io/gonja"
+	"github.com/paradime-io/gonja/ext/django"
+	tu "github.com/paradime-io/gonja/testutils"
 )
 
 func Env(root string) *gonja.Environment {

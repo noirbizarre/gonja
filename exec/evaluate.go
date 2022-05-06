@@ -7,7 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/noirbizarre/gonja/nodes"
+	"github.com/paradime-io/gonja/nodes"
 )
 
 var (
@@ -106,11 +106,11 @@ func (e *Evaluator) evalBinaryExpression(node *nodes.BinaryExpression) *Value {
 
 			v := &Value{Val: reflect.ValueOf([]interface{}{})}
 
-			for ix := 0; ix < left.getResolvedValue().Len(); ix ++ {
+			for ix := 0; ix < left.getResolvedValue().Len(); ix++ {
 				v.Val = reflect.Append(v.Val, left.getResolvedValue().Index(ix))
 			}
 
-			for ix := 0; ix < right.getResolvedValue().Len(); ix ++ {
+			for ix := 0; ix < right.getResolvedValue().Len(); ix++ {
 				v.Val = reflect.Append(v.Val, right.getResolvedValue().Index(ix))
 			}
 

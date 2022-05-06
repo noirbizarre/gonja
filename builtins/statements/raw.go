@@ -3,10 +3,10 @@ package statements
 import (
 	"fmt"
 
-	"github.com/noirbizarre/gonja/exec"
-	"github.com/noirbizarre/gonja/nodes"
-	"github.com/noirbizarre/gonja/parser"
-	"github.com/noirbizarre/gonja/tokens"
+	"github.com/paradime-io/gonja/exec"
+	"github.com/paradime-io/gonja/nodes"
+	"github.com/paradime-io/gonja/parser"
+	"github.com/paradime-io/gonja/tokens"
 )
 
 type RawStmt struct {

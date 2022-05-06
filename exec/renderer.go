@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/noirbizarre/gonja/nodes"
+	"github.com/paradime-io/gonja/nodes"
 )
 
 // TrimState stores and apply trim policy

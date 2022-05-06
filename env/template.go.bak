@@ -7,11 +7,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	// "github.com/noirbizarre/gonja/config"
-	"github.com/noirbizarre/gonja/eval"
-	"github.com/noirbizarre/gonja/nodes"
-	"github.com/noirbizarre/gonja/parser"
-	"github.com/noirbizarre/gonja/tokens"
+	// "github.com/paradime-io/gonja/config"
+	"github.com/paradime-io/gonja/eval"
+	"github.com/paradime-io/gonja/nodes"
+	"github.com/paradime-io/gonja/parser"
+	"github.com/paradime-io/gonja/tokens"
 )
 
 type TemplateGetter interface {

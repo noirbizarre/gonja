@@ -3,7 +3,7 @@ package parser
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/noirbizarre/gonja/nodes"
+	"github.com/paradime-io/gonja/nodes"
 )
 
 func (p *Parser) ParseTest(expr nodes.Expression) (nodes.Expression, error) {
@@ -31,8 +31,6 @@ func (p *Parser) ParseTest(expr nodes.Expression) (nodes.Expression, error) {
 		if err == nil && arg != nil {
 			test.Args = append(test.Args, arg)
 		}
-
-		
 
 		// // Check for test-argument (2 tokens needed: ':' ARG)
 		// if p.Match(tokens.Lparen) != nil {
