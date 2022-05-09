@@ -207,11 +207,13 @@ func (p *Parser) parseDict() (nodes.Expression, error) {
 	}
 
 	for p.Match(tokens.Comma) != nil {
-		pair, err := p.parsePair()
-		if err != nil {
-			return nil, err
+		if p.Peek(tokens.Rbrace) == nil {
+			pair, err := p.parsePair()
+			if err != nil {
+				return nil, err
+			}
+			dict.Pairs = append(dict.Pairs, pair)
 		}
-		dict.Pairs = append(dict.Pairs, pair)
 	}
 
 	if p.Match(tokens.Rbrace) == nil {
