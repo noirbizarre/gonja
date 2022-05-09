@@ -1,0 +1,1 @@
+{% set extra %}EXTRA{% endset %}1{{ extra }}2{{ extra }}

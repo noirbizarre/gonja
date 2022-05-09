@@ -2,6 +2,7 @@ package statements
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/paradime-io/gonja/exec"
 	"github.com/paradime-io/gonja/nodes"
@@ -13,7 +14,8 @@ import (
 type SetStmt struct {
 	Location   *tokens.Token
 	Target     nodes.Expression
-	Expression nodes.Expression
+	Expression *nodes.Expression
+	Wrapper    *nodes.Wrapper
 }
 
 func (stmt *SetStmt) Position() *tokens.Token { return stmt.Location }
@@ -24,9 +26,22 @@ func (stmt *SetStmt) String() string {
 
 func (stmt *SetStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
 	// Evaluate expression
-	value := r.Eval(stmt.Expression)
-	if value.IsError() {
-		return value
+	var value *exec.Value
+	if stmt.Expression != nil {
+		value = r.Eval(*stmt.Expression)
+		if value.IsError() {
+			return value
+		}
+	} else if stmt.Wrapper != nil {
+		ri := r.Inherit()
+		var buffer strings.Builder
+		ri.Out = &buffer
+		if execErr := ri.ExecuteWrapper(stmt.Wrapper); execErr != nil {
+			return execErr
+		}
+		value = exec.AsValue(ri.String())
+	} else {
+		return fmt.Errorf("no value is given in the set block")
 	}
 
 	switch n := stmt.Target.(type) {
@@ -73,22 +88,33 @@ func setParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 	}
 
 	if args.Match(tokens.Assign) == nil {
-		return nil, args.Error("Expected '='.", args.Current())
-	}
+		wrapper, endargs, err := p.WrapUntil("endset")
+		if err != nil {
+			return nil, err
+		}
+		stmt.Wrapper = wrapper
 
-	// Variable expression
-	expr, err := args.ParseExpression()
-	if err != nil {
-		return nil, err
-	}
-	stmt.Expression = expr
+		if !endargs.End() {
+			return nil, endargs.Error("Arguments not allowed here.", nil)
+		}
 
-	// Remaining arguments
-	if !args.End() {
-		return nil, args.Error("Malformed 'set'-tag args.", args.Current())
-	}
+		return stmt, nil
+	} else {
 
-	return stmt, nil
+		// Variable expression
+		expr, err := args.ParseExpression()
+		if err != nil {
+			return nil, err
+		}
+		stmt.Expression = &expr
+
+		// Remaining arguments
+		if !args.End() {
+			return nil, args.Error("Malformed 'set'-tag args.", args.Current())
+		}
+
+		return stmt, nil
+	}
 }
 
 func init() {
