@@ -3,6 +3,7 @@ package tokens_test
 import (
 	"testing"
 
+	"github.com/paradime-io/gonja/config"
 	"github.com/paradime-io/gonja/tokens"
 	"github.com/stretchr/testify/assert"
 )
@@ -281,7 +282,38 @@ func TestLex(t *testing.T) {
 		})
 	}
 }
+func TestRegexpClashingDelimiters(t *testing.T) {
+	t.Run("Expression delimiters clashing the regexp parsing", func(t *testing.T) {
 
+		config.DefaultConfig.VariableStartString = "[["
+		config.DefaultConfig.VariableEndString = "]]"
+		config.DefaultConfig.BlockStartString = "[%"
+		config.DefaultConfig.BlockEndString = "%]"
+		config.DefaultConfig.CommentStartString = "[#"
+		config.DefaultConfig.CommentEndString = "#]"
+		defer func() {
+			config.DefaultConfig = config.NewConfig()
+		}()
+
+		lexer := tokens.NewLexer("[[ variable ]][% block %][# comment #]")
+		go lexer.Run()
+		toks := tokenSlice(lexer.Tokens)
+
+		stream := tokens.NewStream(toks)
+		expected, _ := asStreamResult([]tok{
+			tok{tokens.VariableBegin, "[["}, space, name("variable"), space, tok{tokens.VariableEnd, "]]"},
+			tok{tokens.BlockBegin, "[%"}, space, name("block"), space, tok{tokens.BlockEnd, "%]"},
+			tok{tokens.CommentBegin, "[#"}, data(" comment "), tok{tokens.CommentEnd, "#]"},
+			EOF,
+		})
+
+		actual := streamResult(stream)
+
+		assert := assert.New(t)
+		assert.Equal(len(expected), len(actual))
+		assert.Equal(expected, actual)
+	})
+}
 func TestStreamSlice(t *testing.T) {
 	for _, lc := range lexerCases {
 		test := lc
