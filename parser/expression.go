@@ -40,9 +40,18 @@ func (p *Parser) ParseFilterExpression(expr nodes.Expression) (nodes.Expression,
 	return expr, nil
 }
 
-// ParseExpression parses an expression with optionnal filters
+// ParseExpression parses an expression with optional filters
 // Nested expression shoulds call this method
+
 func (p *Parser) ParseExpression() (nodes.Expression, error) {
+	return p.parseExpression(false)
+}
+
+func (p *Parser) ParseExpressionWithInlineIfs() (nodes.Expression, error) {
+	return p.parseExpression(true)
+}
+
+func (p *Parser) parseExpression(withInlineIfs bool) (nodes.Expression, error) {
 	log.WithFields(log.Fields{
 		"current": p.Current(),
 	}).Trace("ParseExpression")
@@ -51,6 +60,33 @@ func (p *Parser) ParseExpression() (nodes.Expression, error) {
 	expr, err := p.ParseLogicalExpression()
 	if err != nil {
 		return nil, err
+	}
+
+	if withInlineIfs && p.PeekName("if") != nil {
+		BinOp(p.Pop())
+		condition, conditionErr := p.ParseLogicalExpression()
+		if conditionErr != nil {
+			return nil, conditionErr
+		}
+
+		var falseBranch nodes.Expression = &nodes.String{
+			Location: p.Current(),
+			Val:      "",
+		}
+		if p.PeekName("else") != nil {
+			BinOp(p.Pop())
+			var falseBranchErr error
+			falseBranch, falseBranchErr = p.ParseExpression()
+			if falseBranchErr != nil {
+				return nil, falseBranchErr
+			}
+		}
+
+		expr = &nodes.InlineIfExpression{
+			TrueBranch:  expr,
+			FalseBranch: falseBranch,
+			Condition:   condition,
+		}
 	}
 
 	expr, err = p.ParseFilterExpression(expr)
@@ -81,7 +117,7 @@ func (p *Parser) ParseExpressionNode() (nodes.Node, error) {
 		},
 	}
 
-	expr, err := p.ParseExpression()
+	expr, err := p.ParseExpressionWithInlineIfs()
 	if err != nil {
 		return nil, err
 	}

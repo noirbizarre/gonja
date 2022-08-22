@@ -385,6 +385,20 @@ func (expr *BinaryExpression) String() string {
 		expr.Operator.Token.Val, expr.Left, expr.Right, t.Line, t.Col)
 }
 
+type InlineIfExpression struct {
+	TrueBranch  Expression
+	FalseBranch Expression
+	Condition   Expression
+}
+
+func (b *InlineIfExpression) Position() *tokens.Token { return b.TrueBranch.Position() }
+func (expr *InlineIfExpression) String() string {
+	t := expr.Position()
+
+	return fmt.Sprintf("InlineIfExpression(condition=%s true=%s false=%s Line=%d Col=%d)",
+		expr.Condition, expr.TrueBranch, expr.FalseBranch, t.Line, t.Col)
+}
+
 type BinOperator struct {
 	Token *tokens.Token
 }

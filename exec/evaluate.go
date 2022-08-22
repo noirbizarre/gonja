@@ -72,6 +72,12 @@ func (e *Evaluator) Eval(node nodes.Expression) *Value {
 		return e.EvaluateFiltered(n)
 	case *nodes.TestExpression:
 		return e.EvalTest(n)
+	case *nodes.InlineIfExpression:
+		if e.Eval(n.Condition).IsTrue() {
+			return e.Eval(n.TrueBranch)
+		} else {
+			return e.Eval(n.FalseBranch)
+		}
 	default:
 		return AsValue(errors.Errorf(`Unknown expression type "%T"`, n))
 	}

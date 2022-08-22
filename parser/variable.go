@@ -90,7 +90,7 @@ func (p *Parser) parseList() (nodes.Expression, error) {
 		return &nodes.List{t, []nodes.Expression{}}, nil
 	}
 
-	expr, err := p.ParseExpression()
+	expr, err := p.ParseExpressionWithInlineIfs()
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (p *Parser) parseList() (nodes.Expression, error) {
 			// Trailing coma
 			break
 		}
-		expr, err := p.ParseExpression()
+		expr, err := p.ParseExpressionWithInlineIfs()
 		if err != nil {
 			return nil, err
 		}
@@ -126,7 +126,7 @@ func (p *Parser) parseTuple() (nodes.Expression, error) {
 	if t == nil {
 		return nil, p.Error("Expected (", t)
 	}
-	expr, err := p.ParseExpression()
+	expr, err := p.ParseExpressionWithInlineIfs()
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (p *Parser) parseTuple() (nodes.Expression, error) {
 			trailingComa = true
 			break
 		}
-		expr, err := p.ParseExpression()
+		expr, err := p.ParseExpressionWithInlineIfs()
 		if err != nil {
 			return nil, err
 		}
@@ -166,7 +166,7 @@ func (p *Parser) parsePair() (*nodes.Pair, error) {
 	log.WithFields(log.Fields{
 		"current": p.Current(),
 	}).Trace("parsePair")
-	key, err := p.ParseExpression()
+	key, err := p.ParseExpressionWithInlineIfs()
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func (p *Parser) parsePair() (*nodes.Pair, error) {
 	if p.Match(tokens.Colon) == nil {
 		return nil, p.Error("Expected \":\"", p.Current())
 	}
-	value, err := p.ParseExpression()
+	value, err := p.ParseExpressionWithInlineIfs()
 	if err != nil {
 		return nil, err
 	}
@@ -317,14 +317,14 @@ func (p *Parser) ParseVariable() (nodes.Expression, error) {
 				}
 
 				// TODO: Handle multiple args and kwargs
-				v, err := p.ParseExpression()
+				v, err := p.ParseExpressionWithInlineIfs()
 				if err != nil {
 					return nil, err
 				}
 
 				if p.Match(tokens.Assign) != nil {
 					key := v.Position().Val
-					value, errValue := p.ParseExpression()
+					value, errValue := p.ParseExpressionWithInlineIfs()
 					if errValue != nil {
 						return nil, errValue
 					}
