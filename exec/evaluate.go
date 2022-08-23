@@ -284,10 +284,11 @@ func (e *Evaluator) evalGetitem(node *nodes.Getitem) *Value {
 		return AsValue(errors.Wrapf(value, `Unable to evaluate target %s`, node.Node))
 	}
 
-	if node.Arg != "" {
-		item, found := value.Getitem(node.Arg)
+	if node.Arg != nil {
+		key := e.Eval(*node.Arg).String()
+		item, found := value.Getitem(key)
 		if !found {
-			item, found = value.Getattr(node.Arg)
+			item, found = value.Getattr(key)
 		}
 		if !found {
 			if item.IsError() {

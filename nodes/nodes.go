@@ -311,7 +311,7 @@ func (c *Call) String() string {
 type Getitem struct {
 	Location *tokens.Token
 	Node     Node
-	Arg      string
+	Arg      *Expression
 	Index    int
 }
 
@@ -319,8 +319,8 @@ func (g *Getitem) Position() *tokens.Token { return g.Location }
 func (g *Getitem) String() string {
 	t := g.Position()
 	var param string
-	if g.Arg != "" {
-		param = fmt.Sprintf(`Arg=%s`, g.Arg)
+	if g.Arg != nil {
+		param = fmt.Sprintf(`Arg=%s`, *g.Arg)
 	} else {
 		param = fmt.Sprintf(`Index=%s`, strconv.Itoa(g.Index))
 	}

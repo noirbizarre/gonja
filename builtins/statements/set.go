@@ -52,7 +52,9 @@ func (stmt *SetStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error 
 		if target.IsError() {
 			return errors.Wrapf(target, `Unable to evaluate target %s`, n)
 		}
-		if err := target.Set(n.Attr, value.Interface()); err != nil {
+		if n.Attr == "" {
+			return errors.Errorf(`Not implemented to evaluate getattr at %s`, n.Attr) // TODO: implement
+		} else if err := target.Set(n.Attr, value.Interface()); err != nil {
 			return errors.Wrapf(err, `Unable to set value on "%s"`, n.Attr)
 		}
 	case *nodes.Getitem:
@@ -60,7 +62,9 @@ func (stmt *SetStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error 
 		if target.IsError() {
 			return errors.Wrapf(target, `Unable to evaluate target %s`, n)
 		}
-		if err := target.Set(n.Arg, value.Interface()); err != nil {
+		if n.Arg == nil {
+			return errors.Errorf(`Not implemented to evaluate getitem at %s`, n.Arg) // TODO: implement
+		} else if err := target.Set(r.Eval(*n.Arg).String(), value.Interface()); err != nil {
 			return errors.Wrapf(err, `Unable to set value on "%s"`, n.Arg)
 		}
 	default:

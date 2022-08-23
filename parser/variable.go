@@ -257,7 +257,11 @@ func (p *Parser) ParseVariable() (nodes.Expression, error) {
 				Node:     variable,
 			}
 			tok := p.Match(tokens.Name, tokens.Integer)
-			switch tok.Type {
+			tokenType := tokens.Error
+			if tok != nil {
+				tokenType = tok.Type
+			}
+			switch tokenType {
 			case tokens.Name:
 				getattr.Attr = tok.Val
 			case tokens.Integer:
@@ -272,27 +276,17 @@ func (p *Parser) ParseVariable() (nodes.Expression, error) {
 			variable = getattr
 			continue
 		} else if bracket := p.Match(tokens.Lbracket); bracket != nil {
+			arg, argErr := p.ParseExpressionWithInlineIfs()
+			if argErr != nil {
+				return nil, argErr
+			}
 			getitem := &nodes.Getitem{
-				Location: dot,
+				Location: bracket,
 				Node:     variable,
+				Arg:      &arg,
+				Index:    0,
 			}
-			tok := p.Match(tokens.String, tokens.Integer)
-			tokenType := tokens.Error
-			if tok != nil {
-				tokenType = tok.Type
-			}
-			switch tokenType {
-			case tokens.String:
-				getitem.Arg = tok.Val
-			case tokens.Integer:
-				i, err := strconv.Atoi(tok.Val)
-				if err != nil {
-					return nil, p.Error(err.Error(), tok)
-				}
-				getitem.Index = i
-			default:
-				return nil, p.Error("This token is not allowed within a variable name.", p.Current())
-			}
+
 			variable = getitem
 			if p.Match(tokens.Rbracket) == nil {
 				return nil, p.Error("Unbalanced bracket", bracket)
