@@ -145,3 +145,51 @@ func GlobErrorTests(t *testing.T, root string) {
 		})
 	}
 }
+
+func GlobParsingErrorTests(t *testing.T, root string) {
+	pattern := filepath.Join(root, `*.err`)
+	matches, err := filepath.Glob(pattern)
+	env := TestEnv(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, match := range matches {
+		testName := strings.Replace(path.Base(match), ".err", "", 1)
+		t.Run(testName, func(t *testing.T) {
+			testData, err := ioutil.ReadFile(match)
+			tests := strings.Split(string(testData), "\n")
+
+			checkFilename := fmt.Sprintf("%s.out", match)
+			checkData, err := ioutil.ReadFile(checkFilename)
+			if err != nil {
+				t.Fatalf("Error on ReadFile('%s'):\n%s", checkFilename, err.Error())
+			}
+			checks := strings.Split(string(checkData), "\n")
+
+			if len(checks) != len(tests) {
+				t.Fatal("Template lines != Checks lines")
+			}
+
+			for idx, test := range tests {
+				if strings.TrimSpace(test) == "" {
+					continue
+				}
+				if strings.TrimSpace(checks[idx]) == "" {
+					t.Fatalf("[%s Line %d] Check is empty (must contain an regular expression).",
+						match, idx+1)
+				}
+
+				_, err := env.FromString(test)
+				if err == nil {
+					t.Fatalf("Error excpected but not received: %s\n", test)
+				}
+
+				re := regexp.MustCompile(fmt.Sprintf("^%s$", checks[idx]))
+				if !re.MatchString(err.Error()) {
+					t.Fatalf("[%s Line %d] Error for '%s' (err = '%s') does not match the (regexp-)check: %s",
+						match, idx+1, test, err.Error(), checks[idx])
+				}
+			}
+		})
+	}
+}

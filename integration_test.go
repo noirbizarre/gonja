@@ -54,3 +54,7 @@ func TestStatements(t *testing.T) {
 // func TestExecutionErrors(t *testing.T) {
 // 	tu.GlobErrorTests(t, "./testData/errors/execution")
 // }
+
+func TestFuzzErrors(t *testing.T) {
+	tu.GlobParsingErrorTests(t, "./testData/fuzz")
+}

@@ -446,6 +446,8 @@ func (l *Lexer) lexExpression() lexFn {
 				return nil
 			}
 			l.emit(Rbracket)
+		case rEOF:
+			return l.lexData
 		}
 	}
 	return l.lexData
@@ -512,6 +514,9 @@ func (l *Lexer) lexString() lexFn {
 	quote := l.next() // should be either ' or "
 	var prev rune
 	for r := l.next(); r != quote || prev == '\\'; r, prev = l.next(), r {
+		if r == rEOF {
+			return l.lexData
+		}
 	}
 	l.processAndEmit(String, unescape)
 	return l.lexExpression

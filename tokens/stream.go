@@ -91,6 +91,9 @@ func (s *Stream) nonIgnored() *Token {
 }
 
 func (s *Stream) consume() *Token {
+	if s.End() {
+		return nil
+	}
 	s.previous = s.current
 	s.current = s.next
 	if s.backup != nil {
