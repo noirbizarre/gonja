@@ -111,14 +111,14 @@ func (p *Parser) ParseFilter() (*nodes.FilterCall, error) {
 
 		for p.Match(tokens.Comma) != nil || p.Match(tokens.Rparen) == nil {
 			// TODO: Handle multiple args and kwargs
-			v, err := p.ParseExpression()
+			v, err := p.ParseExpressionWithInlineIfs()
 			if err != nil {
 				return nil, err
 			}
 
 			if p.Match(tokens.Assign) != nil {
 				key := v.Position().Val
-				value, errValue := p.ParseExpression()
+				value, errValue := p.ParseExpressionWithInlineIfs()
 				if errValue != nil {
 					return nil, errValue
 				}

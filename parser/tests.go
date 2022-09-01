@@ -18,6 +18,9 @@ func (p *Parser) ParseTest(expr nodes.Expression) (nodes.Expression, error) {
 
 	if p.MatchName("is") != nil {
 		not := p.MatchName("not")
+		if p.End() {
+			return nil, p.Error("is statement is incomplete", nil)
+		}
 		ident := p.Next()
 
 		test := &nodes.TestCall{

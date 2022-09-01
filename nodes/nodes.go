@@ -311,7 +311,7 @@ func (c *Call) String() string {
 type Getitem struct {
 	Location *tokens.Token
 	Node     Node
-	Arg      string
+	Arg      *Expression
 	Index    int
 }
 
@@ -319,8 +319,8 @@ func (g *Getitem) Position() *tokens.Token { return g.Location }
 func (g *Getitem) String() string {
 	t := g.Position()
 	var param string
-	if g.Arg != "" {
-		param = fmt.Sprintf(`Arg=%s`, g.Arg)
+	if g.Arg != nil {
+		param = fmt.Sprintf(`Arg=%s`, *g.Arg)
 	} else {
 		param = fmt.Sprintf(`Index=%s`, strconv.Itoa(g.Index))
 	}
@@ -383,6 +383,20 @@ func (expr *BinaryExpression) String() string {
 
 	return fmt.Sprintf("BinaryExpression(operator=%s left=%s right=%s Line=%d Col=%d)",
 		expr.Operator.Token.Val, expr.Left, expr.Right, t.Line, t.Col)
+}
+
+type InlineIfExpression struct {
+	TrueBranch  Expression
+	FalseBranch Expression
+	Condition   Expression
+}
+
+func (b *InlineIfExpression) Position() *tokens.Token { return b.TrueBranch.Position() }
+func (expr *InlineIfExpression) String() string {
+	t := expr.Position()
+
+	return fmt.Sprintf("InlineIfExpression(condition=%s true=%s false=%s Line=%d Col=%d)",
+		expr.Condition, expr.TrueBranch, expr.FalseBranch, t.Line, t.Col)
 }
 
 type BinOperator struct {

@@ -72,6 +72,12 @@ func (e *Evaluator) Eval(node nodes.Expression) *Value {
 		return e.EvaluateFiltered(n)
 	case *nodes.TestExpression:
 		return e.EvalTest(n)
+	case *nodes.InlineIfExpression:
+		if e.Eval(n.Condition).IsTrue() {
+			return e.Eval(n.TrueBranch)
+		} else {
+			return e.Eval(n.FalseBranch)
+		}
 	default:
 		return AsValue(errors.Errorf(`Unknown expression type "%T"`, n))
 	}
@@ -278,10 +284,11 @@ func (e *Evaluator) evalGetitem(node *nodes.Getitem) *Value {
 		return AsValue(errors.Wrapf(value, `Unable to evaluate target %s`, node.Node))
 	}
 
-	if node.Arg != "" {
-		item, found := value.Getitem(node.Arg)
+	if node.Arg != nil {
+		key := e.Eval(*node.Arg).String()
+		item, found := value.Getitem(key)
 		if !found {
-			item, found = value.Getattr(node.Arg)
+			item, found = value.Getattr(key)
 		}
 		if !found {
 			if item.IsError() {
