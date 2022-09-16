@@ -1,15 +1,14 @@
 package gonja_test
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/noirbizarre/gonja"
 	"github.com/noirbizarre/gonja/config"
-	"github.com/pmezard/go-difflib/difflib"
-
 	tu "github.com/noirbizarre/gonja/testutils"
 )
 
@@ -49,7 +48,7 @@ func TestWhiteSpace(t *testing.T) {
 				t.Fatalf("Error on FromFile('%s'): %s", source, err.Error())
 			}
 			output := fmt.Sprintf(result, test.name)
-			expected, rerr := ioutil.ReadFile(output)
+			expected, rerr := os.ReadFile(output)
 			if rerr != nil {
 				t.Fatalf("Error on ReadFile('%s'): %s", output, rerr.Error())
 			}
@@ -57,19 +56,7 @@ func TestWhiteSpace(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Error on Execute('%s'): %s", source, err.Error())
 			}
-			// rendered = testTemplateFixes.fixIfNeeded(match, rendered)
-			if bytes.Compare(expected, rendered) != 0 {
-				diff := difflib.UnifiedDiff{
-					A:        difflib.SplitLines(string(expected)),
-					B:        difflib.SplitLines(string(rendered)),
-					FromFile: "Expected",
-					ToFile:   "Rendered",
-					Context:  2,
-					Eol:      "\n",
-				}
-				result, _ := difflib.GetUnifiedDiffString(diff)
-				t.Errorf("%s rendered with diff:\n%v", source, result)
-			}
+			assert.Equalf(t, string(expected), string(rendered), "%s rendered with diff", source)
 		})
 	}
 }

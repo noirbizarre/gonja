@@ -9,8 +9,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
-
+	"github.com/noirbizarre/gonja/log"
 	u "github.com/noirbizarre/gonja/utils"
 )
 
@@ -24,7 +23,8 @@ type Value struct {
 // through a Context or within filter functions.
 //
 // Example:
-//     AsValue("my string")
+//
+//	AsValue("my string")
 func AsValue(i interface{}) *Value {
 	return &Value{
 		Val: reflect.ValueOf(i),
@@ -123,12 +123,12 @@ func (v *Value) Error() string {
 // of type string, gonja tries to convert it. Currently the following
 // types for underlying values are supported:
 //
-//     1. string
-//     2. int/uint (any size)
-//     3. float (any precision)
-//     4. bool
-//     5. time.Time
-//     6. String() will be called on the underlying value if provided
+//  1. string
+//  2. int/uint (any size)
+//  3. float (any precision)
+//  4. bool
+//  5. time.Time
+//  6. String() will be called on the underlying value if provided
 //
 // NIL values will lead to an empty string. Unsupported types are leading
 // to their respective type name.
@@ -205,7 +205,7 @@ func (v *Value) String() string {
 		return fmt.Sprintf("{%s}", strings.Join(pairs, ", "))
 	}
 
-	log.Errorf("Value.String() not implemented for type: %s\n", resolved.Kind().String())
+	log.Error("Value.String() not implemented for type", "type", resolved.Kind().String())
 	return resolved.String()
 }
 
@@ -233,7 +233,7 @@ func (v *Value) Integer() int {
 		}
 		return int(f)
 	default:
-		log.Errorf("Value.Integer() not available for type: %s\n", v.getResolvedValue().Kind().String())
+		log.Error("Value.Integer() not available for type", "type", v.getResolvedValue().Kind().String())
 		return 0
 	}
 }
@@ -257,7 +257,7 @@ func (v *Value) Float() float64 {
 		}
 		return f
 	default:
-		log.Errorf("Value.Float() not available for type: %s\n", v.getResolvedValue().Kind().String())
+		log.Error("Value.Float() not available for type", "type", v.getResolvedValue().Kind().String())
 		return 0.0
 	}
 }
@@ -270,7 +270,7 @@ func (v *Value) Bool() bool {
 	case reflect.Bool:
 		return v.getResolvedValue().Bool()
 	default:
-		log.Errorf("Value.Bool() not available for type: %s\n", v.getResolvedValue().Kind().String())
+		log.Error("Value.Bool() not available for type", "type", v.getResolvedValue().Kind().String())
 		return false
 	}
 }
@@ -279,12 +279,12 @@ func (v *Value) Bool() bool {
 //
 // Returns TRUE in one the following cases:
 //
-//     * int != 0
-//     * uint != 0
-//     * float != 0.0
-//     * len(array/chan/map/slice/string) > 0
-//     * bool == true
-//     * underlying value is a struct
+//   - int != 0
+//   - uint != 0
+//   - float != 0.0
+//   - len(array/chan/map/slice/string) > 0
+//   - bool == true
+//   - underlying value is a struct
 //
 // Otherwise returns always FALSE.
 func (v *Value) IsTrue() bool {
@@ -305,7 +305,7 @@ func (v *Value) IsTrue() bool {
 	case reflect.Struct:
 		return true // struct instance is always true
 	default:
-		log.Errorf("Value.IsTrue() not available for type: %s\n", v.getResolvedValue().Kind().String())
+		log.Error("Value.IsTrue() not available for type", "type", v.getResolvedValue().Kind().String())
 		return false
 	}
 }
@@ -315,7 +315,8 @@ func (v *Value) IsTrue() bool {
 // return_value.IsTrue() afterwards.
 //
 // Example:
-//     AsValue(1).Negate().IsTrue() == false
+//
+//	AsValue(1).Negate().IsTrue() == false
 func (v *Value) Negate() *Value {
 	switch v.getResolvedValue().Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
@@ -336,7 +337,7 @@ func (v *Value) Negate() *Value {
 	case reflect.Struct:
 		return AsValue(false)
 	default:
-		log.Errorf("Value.IsTrue() not available for type: %s\n", v.getResolvedValue().Kind().String())
+		log.Error("Value.IsTrue() not available for type", "type", v.getResolvedValue().Kind().String())
 		return AsValue(true)
 	}
 }
@@ -351,7 +352,7 @@ func (v *Value) Len() int {
 		runes := []rune(v.getResolvedValue().String())
 		return len(runes)
 	default:
-		log.Errorf("Value.Len() not available for type: %s\n", v.getResolvedValue().Kind().String())
+		log.Error("Value.Len() not available for type", "type", v.getResolvedValue().Kind().String())
 		return 0
 	}
 }
@@ -366,7 +367,7 @@ func (v *Value) Slice(i, j int) *Value {
 		runes := []rune(v.getResolvedValue().String())
 		return AsValue(string(runes[i:j]))
 	default:
-		log.Errorf("Value.Slice() not available for type: %s\n", v.getResolvedValue().Kind().String())
+		log.Error("Value.Slice() not available for type", "type", v.getResolvedValue().Kind().String())
 		return AsValue([]int{})
 	}
 }
@@ -389,7 +390,7 @@ func (v *Value) Index(i int) *Value {
 		}
 		return AsValue("")
 	default:
-		log.Errorf("Value.Slice() not available for type: %s\n", v.getResolvedValue().Kind().String())
+		log.Error("Value.Slice() not available for type", "type", v.getResolvedValue().Kind().String())
 		return AsValue([]int{})
 	}
 }
@@ -399,7 +400,8 @@ func (v *Value) Index(i int) *Value {
 // whether a struct contains of a specific field or a map contains a specific key).
 //
 // Example:
-//     AsValue("Hello, World!").Contains(AsValue("World")) == true
+//
+//	AsValue("Hello, World!").Contains(AsValue("World")) == true
 func (v *Value) Contains(other *Value) bool {
 	resolved := v.getResolvedValue()
 	switch resolved.Kind() {
@@ -417,7 +419,7 @@ func (v *Value) Contains(other *Value) bool {
 		case string:
 			mapValue = resolved.MapIndex(other.getResolvedValue())
 		default:
-			log.Errorf("Value.Contains() does not support lookup type '%s'\n", other.getResolvedValue().Kind().String())
+			log.Error("Value.Contains() does not support lookup type '%s'\n", other.getResolvedValue().Kind().String())
 			return false
 		}
 
@@ -439,7 +441,7 @@ func (v *Value) Contains(other *Value) bool {
 
 	default:
 		fmt.Println("default")
-		log.Errorf("Value.Contains() not available for type: %s\n", resolved.Kind().String())
+		log.Error("Value.Contains() not available for type", "type", resolved.Kind().String())
 		return false
 	}
 }
@@ -457,10 +459,10 @@ func (v *Value) CanSlice() bool {
 // Iterate iterates over a map, array, slice or a string. It calls the
 // function's first argument for every value with the following arguments:
 //
-//     idx      current 0-index
-//     count    total amount of items
-//     key      *Value for the key or item
-//     value    *Value (only for maps, the respective value for a specific key)
+//	idx      current 0-index
+//	count    total amount of items
+//	key      *Value for the key or item
+//	value    *Value (only for maps, the respective value for a specific key)
 //
 // If the underlying value has no items or is not one of the types above,
 // the empty function (function's second argument) will be called.
@@ -599,7 +601,7 @@ func (v *Value) IterateOrder(fn func(idx, count int, key, value *Value) bool, em
 		return
 	case reflect.Struct:
 		if resolved.Type() != TypeDict {
-			log.Errorf("Value.Iterate() not available for type: %s\n", resolved.Kind().String())
+			log.Error("Value.Iterate() not available for type", "type", resolved.Kind().String())
 		}
 		dict := resolved.Interface().(Dict)
 		keys := dict.Keys()
@@ -630,7 +632,7 @@ func (v *Value) IterateOrder(fn func(idx, count int, key, value *Value) bool, em
 		}
 
 	default:
-		log.Errorf("Value.Iterate() not available for type: %s\n", resolved.Kind().String())
+		log.Error("Value.Iterate() not available for type", "type", resolved.Kind().String())
 	}
 	empty()
 }

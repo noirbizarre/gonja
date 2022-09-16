@@ -1,21 +1,19 @@
 package testutils
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
+	"os"
 	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 
-	"github.com/pmezard/go-difflib/difflib"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/noirbizarre/gonja"
 	"github.com/noirbizarre/gonja/loaders"
-
 	u "github.com/noirbizarre/gonja/utils"
 )
 
@@ -56,7 +54,7 @@ func GlobTemplateTests(t *testing.T, root string, env *gonja.Environment) {
 				t.Fatalf("Error on FromFile('%s'):\n%s", filename, err.Error())
 			}
 			testFilename := fmt.Sprintf("%s.out", match)
-			expected, rerr := ioutil.ReadFile(testFilename)
+			expected, rerr := os.ReadFile(testFilename)
 			if rerr != nil {
 				t.Fatalf("Error on ReadFile('%s'):\n%s", testFilename, rerr.Error())
 			}
@@ -64,19 +62,7 @@ func GlobTemplateTests(t *testing.T, root string, env *gonja.Environment) {
 			if err != nil {
 				t.Fatalf("Error on Execute('%s'):\n%s", filename, err.Error())
 			}
-			// rendered = testTemplateFixes.fixIfNeeded(filename, rendered)
-			if bytes.Compare(expected, rendered) != 0 {
-				diff := difflib.UnifiedDiff{
-					A:        difflib.SplitLines(string(expected)),
-					B:        difflib.SplitLines(string(rendered)),
-					FromFile: "Expected",
-					ToFile:   "Rendered",
-					Context:  2,
-					Eol:      "\n",
-				}
-				result, _ := difflib.GetUnifiedDiffString(diff)
-				t.Errorf("%s rendered with diff:\n%v", testFilename, result)
-			}
+			assert.Equalf(t, string(expected), string(rendered), "%s rendered with diff", testFilename)
 		})
 	}
 }
@@ -97,11 +83,11 @@ func GlobErrorTests(t *testing.T, root string) {
 				}
 			}()
 
-			testData, err := ioutil.ReadFile(match)
+			testData, err := os.ReadFile(match)
 			tests := strings.Split(string(testData), "\n")
 
 			checkFilename := fmt.Sprintf("%s.out", match)
-			checkData, err := ioutil.ReadFile(checkFilename)
+			checkData, err := os.ReadFile(checkFilename)
 			if err != nil {
 				t.Fatalf("Error on ReadFile('%s'):\n%s", checkFilename, err.Error())
 			}

@@ -12,35 +12,10 @@ import (
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
-	log "github.com/sirupsen/logrus"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
-
-var logLevel = flag.String("log.level", "", "Log Level")
 
 func TestMain(m *testing.M) {
 	flag.Parse()
-
-	log.SetFormatter(&prefixed.TextFormatter{
-		ForceColors:      true,
-		DisableTimestamp: true,
-		ForceFormatting:  true,
-	})
-
-	switch *logLevel {
-	case "error":
-		log.SetLevel(log.ErrorLevel)
-	case "warning", "warn":
-		log.SetLevel(log.WarnLevel)
-	case "info":
-		log.SetLevel(log.InfoLevel)
-	case "debug":
-		log.SetLevel(log.DebugLevel)
-	case "trace":
-		log.SetLevel(log.TraceLevel)
-	default:
-		log.SetLevel(log.PanicLevel)
-	}
 	os.Exit(m.Run())
 }
 

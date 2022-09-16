@@ -1,9 +1,8 @@
-// +build bench
+//go:build bench
 
 package gonja_test
 
 import (
-	"io/ioutil"
 	"testing"
 
 	"github.com/noirbizarre/gonja"
@@ -52,7 +51,7 @@ func BenchmarkExecute(b *testing.B) {
 }
 
 func BenchmarkCompileAndExecute(b *testing.B) {
-	buf, err := ioutil.ReadFile("testData/complex.tpl")
+	buf, err := os.ReadFile("testData/complex.tpl")
 	if err != nil {
 		b.Fatal(err)
 	}

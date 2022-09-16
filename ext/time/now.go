@@ -5,9 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/bmuller/arrow"
 	"github.com/pkg/errors"
-
-	arrow "github.com/bmuller/arrow/lib"
 
 	"github.com/noirbizarre/gonja/exec"
 	"github.com/noirbizarre/gonja/nodes"

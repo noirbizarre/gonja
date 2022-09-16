@@ -3,10 +3,9 @@ package parser
 import (
 	"fmt"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/pkg/errors"
 
+	"github.com/noirbizarre/gonja/log"
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/tokens"
 )
@@ -15,9 +14,7 @@ type StatementParser func(parser *Parser, args *Parser) (nodes.Statement, error)
 
 // Tag = "{%" IDENT ARGS "%}"
 func (p *Parser) ParseStatement() (nodes.Statement, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseStatement")
+	log.Trace("ParseStatement", "current", p.Current())
 
 	if p.Match(tokens.BlockBegin) == nil {
 		return nil, p.Error("'{%' expected here", p.Current())
@@ -31,7 +28,7 @@ func (p *Parser) ParseStatement() (nodes.Statement, error) {
 	// Check for the existing statement
 	stmtParser, exists := p.Statements[name.Val]
 	if !exists {
-		// Does not exists
+		// Does not exist
 		return nil, p.Error(fmt.Sprintf("Statement '%s' not found (or beginning not provided)", name.Val), name)
 	}
 
@@ -71,9 +68,7 @@ func (p *Parser) ParseStatement() (nodes.Statement, error) {
 // type StatementParser func(parser *Parser, args *Parser) (nodes.Stmt, error)
 
 func (p *Parser) ParseStatementBlock() (*nodes.StatementBlock, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseStatementBlock")
+	log.Trace("ParseStatementBlock", "current", p.Current())
 
 	begin := p.Match(tokens.BlockBegin)
 	if begin == nil {
@@ -116,14 +111,10 @@ func (p *Parser) ParseStatementBlock() (*nodes.StatementBlock, error) {
 	if end == nil {
 		return nil, p.Error(fmt.Sprintf(`Expected end of block "%s"`, p.Config.BlockEndString), p.Current())
 	}
-	log.WithFields(log.Fields{
-		"args": args,
-	}).Trace("Matched end block")
+	log.Trace("Matched end block", "args", args)
 
 	stream := tokens.NewStream(args)
-	log.WithFields(log.Fields{
-		"stream": stream,
-	}).Trace("Got stream")
+	log.Trace("Got stream", "stream", stream)
 	argParser := NewParser(fmt.Sprintf("%s:args", name.Val), p.Config, stream)
 	log.Trace("argparser")
 	// argParser := newParser(p.name, argsToken, p.template)

@@ -1,10 +1,10 @@
 package gonja
 
 import (
-	"io/ioutil"
+	"io"
 	"sync"
 
-	"github.com/goph/emperror"
+	"github.com/pkg/errors"
 
 	"github.com/noirbizarre/gonja/builtins"
 	"github.com/noirbizarre/gonja/config"
@@ -97,11 +97,11 @@ func (env *Environment) FromBytes(tpl []byte) (*exec.Template, error) {
 func (env *Environment) FromFile(filename string) (*exec.Template, error) {
 	fd, err := env.Loader.Get(filename)
 	if err != nil {
-		return nil, emperror.With(err, "filename", filename)
+		return nil, errors.WithMessagef(err, "filename: %s", filename)
 	}
-	buf, err := ioutil.ReadAll(fd)
+	buf, err := io.ReadAll(fd)
 	if err != nil {
-		return nil, emperror.With(err, "filename", filename)
+		return nil, errors.WithMessagef(err, "filename: %s", filename)
 	}
 
 	return exec.NewTemplate(filename, string(buf), env.EvalConfig)

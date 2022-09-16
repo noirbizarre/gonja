@@ -1,16 +1,14 @@
 package parser
 
 import (
+	"github.com/noirbizarre/gonja/log"
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/tokens"
-	log "github.com/sirupsen/logrus"
 )
 
 // ParseFilterExpression parses an optionnal filter chain for a node
 func (p *Parser) ParseFilterExpression(expr nodes.Expression) (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseFilterExpression")
+	log.Trace("ParseFilterExpression", "current", p.Current())
 
 	if p.Peek(tokens.Pipe) != nil {
 
@@ -34,18 +32,14 @@ func (p *Parser) ParseFilterExpression(expr nodes.Expression) (nodes.Expression,
 		expr = filtered
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("ParseFilterExpression return")
+	log.Trace("ParseFilterExpression return", "expr", expr)
 	return expr, nil
 }
 
 // ParseExpression parses an expression with optionnal filters
 // Nested expression shoulds call this method
 func (p *Parser) ParseExpression() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseExpression")
+	log.Trace("ParseExpression", "current", p.Current())
 	var expr nodes.Expression
 
 	expr, err := p.ParseLogicalExpression()
@@ -58,16 +52,12 @@ func (p *Parser) ParseExpression() (nodes.Expression, error) {
 		return nil, err
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("ParseExpression return")
+	log.Trace("ParseExpression return", "expr", expr)
 	return expr, nil
 }
 
 func (p *Parser) ParseExpressionNode() (nodes.Node, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseExpressionNode")
+	log.Trace("ParseExpressionNode", "current", p.Current())
 
 	tok := p.Match(tokens.VariableBegin)
 	if tok == nil {
@@ -97,8 +87,6 @@ func (p *Parser) ParseExpressionNode() (nodes.Node, error) {
 	node.End = tok
 	node.Trim.Right = tok.Val[0] == '-'
 
-	log.WithFields(log.Fields{
-		"node": node,
-	}).Trace("parseExpressionNode return")
+	log.Trace("parseExpressionNode return", "node", node)
 	return node, nil
 }

@@ -3,15 +3,13 @@ package parser
 import (
 	"fmt"
 
+	"github.com/noirbizarre/gonja/log"
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/tokens"
-	log "github.com/sirupsen/logrus"
 )
 
 func (p *Parser) ParseComment() (*nodes.Comment, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseComment")
+	log.Trace("ParseComment", "current", p.Current())
 
 	tok := p.Match(tokens.CommentBegin)
 	if tok == nil {
@@ -38,8 +36,6 @@ func (p *Parser) ParseComment() (*nodes.Comment, error) {
 	}
 	comment.End = tok
 
-	log.WithFields(log.Fields{
-		"node": comment,
-	}).Trace("ParseComment return")
+	log.Trace("ParseComment return", "node", comment)
 	return comment, nil
 }
