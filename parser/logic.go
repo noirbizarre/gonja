@@ -1,9 +1,9 @@
 package parser
 
 import (
+	"github.com/noirbizarre/gonja/log"
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/tokens"
-	log "github.com/sirupsen/logrus"
 )
 
 var compareOps = []tokens.Type{
@@ -46,16 +46,12 @@ func BinOp(token *tokens.Token) *nodes.BinOperator {
 // }
 
 func (p *Parser) ParseLogicalExpression() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseLogicalExpression")
+	log.Trace("ParseLogicalExpression", "current", p.Current())
 	return p.parseOr()
 }
 
 func (p *Parser) parseOr() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("parseOr")
+	log.Trace("parseOr", "current", p.Current())
 
 	var expr nodes.Expression
 
@@ -77,16 +73,12 @@ func (p *Parser) parseOr() (nodes.Expression, error) {
 		}
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("parseOr return")
+	log.Trace("parseOr return", "expr", expr)
 	return expr, nil
 }
 
 func (p *Parser) parseAnd() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("parseAnd")
+	log.Trace("parseAnd", "current", p.Current())
 
 	var expr nodes.Expression
 
@@ -111,16 +103,12 @@ func (p *Parser) parseAnd() (nodes.Expression, error) {
 		}
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("parseAnd return")
+	log.Trace("parseAnd return", "expr", expr)
 	return expr, nil
 }
 
 func (p *Parser) parseNot() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("parseNot")
+	log.Trace("parseNot", "current", p.Current())
 
 	op := p.MatchName("not")
 	expr, err := p.parseCompare()
@@ -135,16 +123,12 @@ func (p *Parser) parseNot() (nodes.Expression, error) {
 		}
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("parseNot return")
+	log.Trace("parseNot return", "expr", expr)
 	return expr, nil
 }
 
 func (p *Parser) parseCompare() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("parseCompare")
+	log.Trace("parseCompare", "current", p.Current())
 
 	var expr nodes.Expression
 
@@ -182,8 +166,6 @@ func (p *Parser) parseCompare() (nodes.Expression, error) {
 		return nil, err
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("parseCompare return")
+	log.Trace("parseCompare return", "expr", expr)
 	return expr, nil
 }

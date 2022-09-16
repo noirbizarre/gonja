@@ -1,5 +1,3 @@
-// +build integration
-
 package gonja_test
 
 import (

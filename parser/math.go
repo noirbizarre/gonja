@@ -1,13 +1,11 @@
 package parser
 
 import (
-	// "fmt"
-
 	"fmt"
 
+	"github.com/noirbizarre/gonja/log"
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/tokens"
-	log "github.com/sirupsen/logrus"
 )
 
 // type unary struct {
@@ -64,9 +62,7 @@ import (
 // }
 
 func (p *Parser) ParseMath() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseMath")
+	log.Trace("ParseMath", "current", p.Current())
 
 	expr, err := p.parseConcat()
 	if err != nil {
@@ -86,16 +82,12 @@ func (p *Parser) ParseMath() (nodes.Expression, error) {
 		}
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("ParseMath return")
+	log.Trace("ParseMath return", "expr", expr)
 	return expr, nil
 }
 
 func (p *Parser) parseConcat() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("parseConcat")
+	log.Trace("parseConcat", "current", p.Current())
 
 	expr, err := p.ParseMathPrioritary()
 	if err != nil {
@@ -115,16 +107,12 @@ func (p *Parser) parseConcat() (nodes.Expression, error) {
 		}
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("parseConcat return")
+	log.Trace("parseConcat return", "expr", expr)
 	return expr, nil
 }
 
 func (p *Parser) ParseMathPrioritary() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParseMathPrioritary")
+	log.Trace("ParseMathPrioritary", "current", p.Current())
 
 	expr, err := p.parseUnary()
 	if err != nil {
@@ -144,16 +132,12 @@ func (p *Parser) ParseMathPrioritary() (nodes.Expression, error) {
 		}
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("ParseMathPrioritary return")
+	log.Trace("ParseMathPrioritary return", "expr", expr)
 	return expr, nil
 }
 
 func (p *Parser) parseUnary() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("parseUnary")
+	log.Trace("parseUnary", "current", p.Current())
 
 	sign := p.Match(tokens.Add, tokens.Sub)
 
@@ -170,16 +154,12 @@ func (p *Parser) parseUnary() (nodes.Expression, error) {
 		}
 	}
 
-	log.WithFields(log.Fields{
-		"expr": expr,
-	}).Trace("parseUnary return")
+	log.Trace("parseUnary return", "expr", expr)
 	return expr, nil
 }
 
 func (p *Parser) ParsePower() (nodes.Expression, error) {
-	log.WithFields(log.Fields{
-		"current": p.Current(),
-	}).Trace("ParsePower")
+	log.Trace("ParsePower", "current", p.Current())
 
 	expr, err := p.ParseVariableOrLiteral()
 	if err != nil {
@@ -199,9 +179,6 @@ func (p *Parser) ParsePower() (nodes.Expression, error) {
 		}
 	}
 
-	log.WithFields(log.Fields{
-		"type": fmt.Sprintf("%T", expr),
-		"expr": expr,
-	}).Trace("ParsePower return")
+	log.Trace("ParsePower return", "type", fmt.Sprintf("%T", expr), "expr", expr)
 	return expr, nil
 }

@@ -3,9 +3,8 @@ package statements
 import (
 	"fmt"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/noirbizarre/gonja/exec"
+	"github.com/noirbizarre/gonja/log"
 	"github.com/noirbizarre/gonja/nodes"
 	"github.com/noirbizarre/gonja/parser"
 	"github.com/noirbizarre/gonja/tokens"
@@ -42,10 +41,7 @@ func (node *IfStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
 }
 
 func ifParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
-	log.WithFields(log.Fields{
-		"arg":     args.Current(),
-		"current": p.Current(),
-	}).Trace("ParseIf")
+	log.Trace("ParseIf", "arg", args.Current(), "current", p.Current())
 	ifNode := &IfStmt{
 		Location: args.Current(),
 	}

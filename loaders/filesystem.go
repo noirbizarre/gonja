@@ -3,7 +3,6 @@ package loaders
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -19,7 +18,7 @@ type FilesystemLoader struct {
 
 // MustNewFileSystemLoader creates a new FilesystemLoader instance
 // and panics if there's any error during instantiation. The parameters
-// are the same like NewFileSystemLoader.
+// are the same as NewFileSystemLoader.
 func MustNewFileSystemLoader(root string) *FilesystemLoader {
 	fs, err := NewFileSystemLoader(root)
 	if err != nil {
@@ -75,7 +74,7 @@ func (fs *FilesystemLoader) Get(path string) (io.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-	buf, err := ioutil.ReadFile(realPath)
+	buf, err := os.ReadFile(realPath)
 	if err != nil {
 		return nil, err
 	}
