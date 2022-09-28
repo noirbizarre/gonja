@@ -289,7 +289,7 @@ func (l *Lexer) lexBlock() lexFn {
 	l.Pos += len(l.Config.BlockStartString)
 	l.accept("+-")
 	l.emit(BlockBegin)
-	for isSpace(l.peek()) {
+	for isSpace(l.peek()) || isEndOfLine(l.peek()) {
 		l.next()
 	}
 	if len(l.Current()) > 0 {
