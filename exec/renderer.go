@@ -144,7 +144,7 @@ func (r *Renderer) Visit(node nodes.Node) (nodes.Visitor, error) {
 		r.StartTag(n.Trim, false)
 		value := r.Eval(n.Expression)
 		if value.IsError() {
-			return nil, errors.Wrapf(value, `Unable to render expression '%s'`, n.Expression)
+			return nil, errors.Wrapf(value, `Unable to render expression at line %d: %s`, n.Expression.Position().Line, n.Expression)
 		}
 		r.RenderValue(value)
 		r.EndTag(n.Trim)
@@ -154,11 +154,8 @@ func (r *Renderer) Visit(node nodes.Node) (nodes.Visitor, error) {
 		r.Trim.ShouldBlock = r.Config.TrimBlocks
 		stmt, ok := n.Stmt.(Statement)
 		if ok {
-			// Silently ignore non executable statements
-			// return nil, nil
-			// return nil, errors.Errorf(`Unable to execute statement '%s'`, n.Stmt)
 			if err := stmt.Execute(r, n); err != nil {
-				return nil, errors.Wrapf(err, `Unable to execute statement '%s'`, n.Stmt)
+				return nil, errors.Wrapf(err, `Unable to execute statement at line %d: %s`, n.Stmt.Position().Line, n.Stmt)
 			}
 		}
 		return nil, nil

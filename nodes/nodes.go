@@ -53,8 +53,7 @@ type Template struct {
 
 func (t *Template) Position() *tokens.Token { return t.Nodes[0].Position() }
 func (t *Template) String() string {
-	tok := t.Position()
-	return fmt.Sprintf("Template(Name=%s Line=%d Col=%d)", t.Name, tok.Line, tok.Col)
+	return fmt.Sprintf("template(%s)", t.Name)
 }
 
 func (tpl *Template) GetBlocks(name string) []*Wrapper {
@@ -84,8 +83,7 @@ func (d *Data) Position() *tokens.Token { return d.Data }
 
 // func (c *Comment) End() token.Pos { return token.Pos(int(c.Slash) + len(c.Text)) }
 func (c *Data) String() string {
-	return fmt.Sprintf("Data(text=%s Line=%d Col=%d)",
-		u.Ellipsis(c.Data.Val, 20), c.Data.Line, c.Data.Col)
+	return fmt.Sprintf("data(%s)", u.Ellipsis(c.Data.Val, 20))
 }
 
 // A Comment node represents a single {# #} comment.
@@ -100,8 +98,7 @@ func (c *Comment) Position() *tokens.Token { return c.Start }
 
 // func (c *Comment) End() token.Pos { return token.Pos(int(c.Slash) + len(c.Text)) }
 func (c *Comment) String() string {
-	return fmt.Sprintf("Comment(text=%s Line=%d Col=%d)",
-		u.Ellipsis(c.Text, 20), c.Start.Line, c.Start.Col)
+	return fmt.Sprintf("comment(%s)", u.Ellipsis(c.Text, 20))
 }
 
 // Ouput represents a printable expression node {{ }}
@@ -114,8 +111,7 @@ type Output struct {
 
 func (o *Output) Position() *tokens.Token { return o.Start }
 func (o *Output) String() string {
-	return fmt.Sprintf("Output(Expression=%s Line=%d Col=%d)",
-		o.Expression, o.Start.Line, o.End.Col)
+	return fmt.Sprintf("output(%s)", o.Expression)
 }
 
 type FilteredExpression struct {
@@ -127,11 +123,7 @@ func (expr *FilteredExpression) Position() *tokens.Token {
 	return expr.Expression.Position()
 }
 func (expr *FilteredExpression) String() string {
-	t := expr.Expression.Position()
-
-	return fmt.Sprintf("FilteredExpression(Expression=%s Line=%d Col=%d)",
-		expr.Expression, t.Line, t.Col)
-	// return fmt.Sprintf("<FilteredExpression Expression=%s", expr.Expression)
+	return fmt.Sprintf("filtered_expression(%s)", expr.Expression)
 }
 
 type FilterCall struct {
@@ -150,12 +142,7 @@ type TestExpression struct {
 }
 
 func (expr *TestExpression) String() string {
-	t := expr.Position()
-
-	return fmt.Sprintf("TestExpression(Expression=%s Test=%s Line=%d Col=%d)",
-		expr.Expression, expr.Test, t.Line, t.Col)
-	// return fmt.Sprintf("TestExpression(Expression=%s Test=%s)",
-	// 	expr.Expression, expr.Test)
+	return fmt.Sprintf("%s %s", expr.Expression, expr.Test)
 }
 func (expr *TestExpression) Position() *tokens.Token {
 	return expr.Expression.Position()
@@ -172,8 +159,7 @@ type TestCall struct {
 }
 
 func (tc *TestCall) String() string {
-	return fmt.Sprintf("TestCall(name=%s Line=%d Col=%d)",
-		tc.Name, tc.Token.Line, tc.Token.Col)
+	return fmt.Sprintf("test(%s)", tc.Name)
 }
 
 type String struct {
@@ -214,8 +200,7 @@ type Name struct {
 
 func (n *Name) Position() *tokens.Token { return n.Name }
 func (n *Name) String() string {
-	t := n.Position()
-	return fmt.Sprintf("Name(Val=%s Line=%d Col=%d)", t.Val, t.Line, t.Col)
+	return n.Position().Val
 }
 
 type List struct {
@@ -249,8 +234,7 @@ type Pair struct {
 
 func (p *Pair) Position() *tokens.Token { return p.Key.Position() }
 func (p *Pair) String() string {
-	t := p.Position()
-	return fmt.Sprintf("Pair(Key=%s Value=%s Line=%d Col=%d)", p.Key, p.Value, t.Line, t.Col)
+	return fmt.Sprintf("%s: %s", p.Key, p.Value)
 }
 
 type Variable struct {
@@ -292,7 +276,7 @@ type VariablePart struct {
 }
 
 func (vp *VariablePart) String() string {
-	return fmt.Sprintf("VariablePart(S=%s I=%d)", vp.S, vp.I)
+	return fmt.Sprintf("variable_part(%s %d)", vp.S, vp.I)
 }
 
 type Call struct {
@@ -304,8 +288,7 @@ type Call struct {
 
 func (c *Call) Position() *tokens.Token { return c.Location }
 func (c *Call) String() string {
-	t := c.Position()
-	return fmt.Sprintf("Call(Args=%s Kwargs=%s Line=%d Col=%d)", c.Args, c.Kwargs, t.Line, t.Col)
+	return fmt.Sprintf("call(%s, %s)", c.Args, c.Kwargs)
 }
 
 type Getitem struct {
@@ -317,14 +300,13 @@ type Getitem struct {
 
 func (g *Getitem) Position() *tokens.Token { return g.Location }
 func (g *Getitem) String() string {
-	t := g.Position()
 	var param string
 	if g.Arg != "" {
-		param = fmt.Sprintf(`Arg=%s`, g.Arg)
+		param = g.Arg
 	} else {
-		param = fmt.Sprintf(`Index=%s`, strconv.Itoa(g.Index))
+		param = strconv.Itoa(g.Index)
 	}
-	return fmt.Sprintf("Getitem(Node=%s %s Line=%d Col=%d)", g.Node, param, t.Line, t.Col)
+	return fmt.Sprintf("%s.%s", g.Node, param)
 }
 
 type Getattr struct {
@@ -336,14 +318,13 @@ type Getattr struct {
 
 func (g *Getattr) Position() *tokens.Token { return g.Location }
 func (g *Getattr) String() string {
-	t := g.Position()
 	var param string
 	if g.Attr != "" {
-		param = fmt.Sprintf(`Attr=%s`, g.Attr)
+		param = g.Attr
 	} else {
-		param = fmt.Sprintf(`Index=%s`, strconv.Itoa(g.Index))
+		param = strconv.Itoa(g.Index)
 	}
-	return fmt.Sprintf("Getattr(Node=%s %s Line=%d Col=%d)", g.Node, param, t.Line, t.Col)
+	return fmt.Sprintf("%s.%s", g.Node, param)
 }
 
 type Negation struct {
@@ -353,8 +334,7 @@ type Negation struct {
 
 func (n *Negation) Position() *tokens.Token { return n.Operator }
 func (n *Negation) String() string {
-	t := n.Operator
-	return fmt.Sprintf("Negation(term=%s Line=%d Col=%d)", n.Term, t.Line, t.Col)
+	return fmt.Sprintf("!%s", n.Term)
 }
 
 type UnaryExpression struct {
@@ -367,8 +347,7 @@ func (u *UnaryExpression) Position() *tokens.Token { return u.Operator }
 func (u *UnaryExpression) String() string {
 	t := u.Operator
 
-	return fmt.Sprintf("UnaryExpression(sign=%s term=%s Line=%d Col=%d)",
-		t.Val, u.Term, t.Line, t.Col)
+	return fmt.Sprintf("%s%s", t.Val, u.Term)
 }
 
 type BinaryExpression struct {
@@ -379,10 +358,7 @@ type BinaryExpression struct {
 
 func (b *BinaryExpression) Position() *tokens.Token { return b.Left.Position() }
 func (expr *BinaryExpression) String() string {
-	t := expr.Position()
-
-	return fmt.Sprintf("BinaryExpression(operator=%s left=%s right=%s Line=%d Col=%d)",
-		expr.Operator.Token.Val, expr.Left, expr.Right, t.Line, t.Col)
+	return fmt.Sprintf("%s %s %s", expr.Left, expr.Operator.Token.Val, expr.Right)
 }
 
 type BinOperator struct {
@@ -402,10 +378,7 @@ type StatementBlock struct {
 
 func (s StatementBlock) Position() *tokens.Token { return s.Location }
 func (s StatementBlock) String() string {
-	t := s.Position()
-
-	return fmt.Sprintf("StatementBlock(Name=%s Impl=%s Line=%d Col=%d)",
-		s.Name, s.Stmt, t.Line, t.Col)
+	return fmt.Sprintf("%s %s", s.Name, s.Stmt)
 }
 
 type Wrapper struct {
@@ -418,10 +391,7 @@ type Wrapper struct {
 
 func (w Wrapper) Position() *tokens.Token { return w.Location }
 func (w Wrapper) String() string {
-	t := w.Position()
-
-	return fmt.Sprintf("Wrapper(Nodes=%s EndTag=%s Line=%d Col=%d)",
-		w.Nodes, w.EndTag, t.Line, t.Col)
+	return fmt.Sprintf("wrapper(%s,%s)", w.Nodes, w.EndTag)
 }
 
 type Macro struct {
@@ -434,6 +404,5 @@ type Macro struct {
 
 func (m *Macro) Position() *tokens.Token { return m.Location }
 func (m *Macro) String() string {
-	t := m.Position()
-	return fmt.Sprintf("Macro(Name=%s Args=%s Kwargs=%s Line=%d Col=%d)", m.Name, m.Args, m.Kwargs, t.Line, t.Col)
+	return fmt.Sprintf("%s(%s,%s)", m.Name, m.Args, m.Kwargs)
 }
