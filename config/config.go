@@ -44,6 +44,9 @@ type Config struct {
 	// This can also be a callable that is passed the template name
 	// and has to return True or False depending on autoescape should be enabled by default.
 	Autoescape bool
+	// Whether to be strict about undefined attribute or item in an object and return error
+	// or return a nil value on missing data and ignore it entirely
+	StrictUndefined bool
 
 	// Allow extensions to store some config
 	Ext map[string]Inheritable
@@ -63,6 +66,7 @@ func NewConfig() *Config {
 		NewlineSequence:     "\n",
 		KeepTrailingNewline: false,
 		Autoescape:          false,
+		StrictUndefined:     false,
 		Ext:                 map[string]Inheritable{},
 	}
 }
@@ -85,6 +89,7 @@ func (cfg *Config) Inherit() *Config {
 		NewlineSequence:     cfg.NewlineSequence,
 		KeepTrailingNewline: cfg.KeepTrailingNewline,
 		Autoescape:          cfg.Autoescape,
+		StrictUndefined:     cfg.StrictUndefined,
 		Ext:                 ext,
 	}
 }
