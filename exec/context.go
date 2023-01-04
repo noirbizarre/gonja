@@ -21,14 +21,14 @@ func (ctx *Context) Has(name string) bool {
 	return exists
 }
 
-func (ctx *Context) Get(name string) interface{} {
+func (ctx *Context) Get(name string) (interface{}, bool) {
 	value, exists := ctx.data[name]
 	if exists {
-		return value
+		return value, true
 	} else if ctx.parent != nil {
 		return ctx.parent.Get(name)
 	} else {
-		return nil
+		return nil, false
 	}
 }
 
