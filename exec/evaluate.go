@@ -268,7 +268,10 @@ func (e *Evaluator) evalPair(node *nodes.Pair) *Value {
 }
 
 func (e *Evaluator) evalName(node *nodes.Name) *Value {
-	val := e.Ctx.Get(node.Name.Val)
+	val, ok := e.Ctx.Get(node.Name.Val)
+	if !ok && e.Config.StrictUndefined {
+		return AsValue(errors.Errorf(`Unable to evaluate name "%s"`, node.Name.Val))
+	}
 	return ToValue(val)
 }
 
@@ -410,7 +413,10 @@ func (e *Evaluator) evalVariable(node *nodes.Variable) (*Value, error) {
 
 	for idx, part := range node.Parts {
 		if idx == 0 {
-			val := e.Ctx.Get(node.Parts[0].S)
+			val, ok := e.Ctx.Get(node.Parts[0].S)
+			if !ok && e.Config.StrictUndefined {
+				return nil, errors.Errorf(`Unable to evaluate name "%s"`, node.Parts[0].S)
+			}
 			current = reflect.ValueOf(val) // Get the initial value
 		} else {
 			// Next parts, resolve it from current

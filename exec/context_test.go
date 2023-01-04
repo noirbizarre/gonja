@@ -48,10 +48,11 @@ func TestContext(t *testing.T) {
 
 			ctx := exec.EmptyContext()
 			ctx.Set(test.name, test.value)
-			value := ctx.Get(test.name)
+			value, ok := ctx.Get(test.name)
 
 			// value := exec.AsValue(test.value)
 			assert.Equal(test.value, value)
+			assert.True(ok)
 
 			// assert.Equal(test.asString, value.String())
 			// test.flags.assert(t, value)
@@ -73,10 +74,11 @@ func TestSubContext(t *testing.T) {
 			ctx := exec.EmptyContext()
 			ctx.Set(test.name, test.value)
 			sub := ctx.Inherit()
-			value := sub.Get(test.name)
+			value, ok := sub.Get(test.name)
 
 			// value := exec.AsValue(test.value)
 			assert.Equal(test.value, value)
+			assert.True(ok)
 
 			// assert.Equal(test.asString, value.String())
 			// test.flags.assert(t, value)
@@ -106,8 +108,9 @@ func TestFuncContext(t *testing.T) {
 			}()
 			assert := assert.New(t)
 
-			value := test.ctx.Get("func")
-			_, ok := value.(func())
+			value, ok := test.ctx.Get("func")
+			assert.True(ok)
+			_, ok = value.(func())
 			assert.True(ok)
 		})
 	}
