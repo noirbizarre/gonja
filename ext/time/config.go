@@ -1,7 +1,7 @@
 package time
 
 import (
-	arrow "github.com/bmuller/arrow/lib"
+	"github.com/bmuller/arrow"
 
 	"github.com/paradime-io/gonja/config"
 )

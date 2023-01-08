@@ -3,8 +3,8 @@ package testutils
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
+	"os"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -56,7 +56,7 @@ func GlobTemplateTests(t *testing.T, root string, env *gonja.Environment) {
 				t.Fatalf("Error on FromFile('%s'):\n%s", filename, err.Error())
 			}
 			testFilename := fmt.Sprintf("%s.out", match)
-			expected, rerr := ioutil.ReadFile(testFilename)
+			expected, rerr := os.ReadFile(testFilename)
 			if rerr != nil {
 				t.Fatalf("Error on ReadFile('%s'):\n%s", testFilename, rerr.Error())
 			}
@@ -97,11 +97,11 @@ func GlobErrorTests(t *testing.T, root string) {
 				}
 			}()
 
-			testData, err := ioutil.ReadFile(match)
+			testData, err := os.ReadFile(match)
 			tests := strings.Split(string(testData), "\n")
 
 			checkFilename := fmt.Sprintf("%s.out", match)
-			checkData, err := ioutil.ReadFile(checkFilename)
+			checkData, err := os.ReadFile(checkFilename)
 			if err != nil {
 				t.Fatalf("Error on ReadFile('%s'):\n%s", checkFilename, err.Error())
 			}
@@ -156,11 +156,11 @@ func GlobParsingErrorTests(t *testing.T, root string) {
 	for _, match := range matches {
 		testName := strings.Replace(path.Base(match), ".err", "", 1)
 		t.Run(testName, func(t *testing.T) {
-			testData, err := ioutil.ReadFile(match)
+			testData, err := os.ReadFile(match)
 			tests := strings.Split(string(testData), "\n")
 
 			checkFilename := fmt.Sprintf("%s.out", match)
-			checkData, err := ioutil.ReadFile(checkFilename)
+			checkData, err := os.ReadFile(checkFilename)
 			if err != nil {
 				t.Fatalf("Error on ReadFile('%s'):\n%s", checkFilename, err.Error())
 			}
@@ -181,7 +181,7 @@ func GlobParsingErrorTests(t *testing.T, root string) {
 
 				_, err := env.FromString(test)
 				if err == nil {
-					t.Fatalf("Error excpected but not received: %s\n", test)
+					t.Fatalf("Error expected but not received: %s\n", test)
 				}
 
 				re := regexp.MustCompile(fmt.Sprintf("^%s$", checks[idx]))

@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	. "github.com/go-check/check"
+	. "gopkg.in/check.v1"
 	log "github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )

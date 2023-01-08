@@ -7,7 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	arrow "github.com/bmuller/arrow/lib"
+	"github.com/bmuller/arrow"
 
 	"github.com/paradime-io/gonja/exec"
 	"github.com/paradime-io/gonja/nodes"

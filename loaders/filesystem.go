@@ -3,7 +3,6 @@ package loaders
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -29,7 +28,7 @@ func MustNewFileSystemLoader(root string) *FilesystemLoader {
 }
 
 // NewFileSystemLoader creates a new FilesystemLoader and allows
-// templatesto be loaded from disk (unrestricted). If any base directory
+// templates to be loaded from disk (unrestricted). If any base directory
 // is given (or being set using SetBaseDir), this base directory is being used
 // for path calculation in template inclusions/imports. Otherwise the path
 // is calculated based relatively to the including template's path.
@@ -75,7 +74,7 @@ func (fs *FilesystemLoader) Get(path string) (io.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-	buf, err := ioutil.ReadFile(realPath)
+	buf, err := os.ReadFile(realPath)
 	if err != nil {
 		return nil, err
 	}

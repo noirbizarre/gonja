@@ -3,7 +3,7 @@ package time_test
 import (
 	"testing"
 
-	arrow "github.com/bmuller/arrow/lib"
+	"github.com/bmuller/arrow"
 
 	"github.com/paradime-io/gonja"
 	"github.com/paradime-io/gonja/ext/time"

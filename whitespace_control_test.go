@@ -3,7 +3,7 @@ package gonja_test
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/paradime-io/gonja"
@@ -49,7 +49,7 @@ func TestWhiteSpace(t *testing.T) {
 				t.Fatalf("Error on FromFile('%s'): %s", source, err.Error())
 			}
 			output := fmt.Sprintf(result, test.name)
-			expected, rerr := ioutil.ReadFile(output)
+			expected, rerr := os.ReadFile(output)
 			if rerr != nil {
 				t.Fatalf("Error on ReadFile('%s'): %s", output, rerr.Error())
 			}
