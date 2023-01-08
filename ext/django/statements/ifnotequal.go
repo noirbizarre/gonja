@@ -62,26 +62,26 @@ func ifNotEqualParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, e
 	}
 
 	// Wrap then/else-blocks
-	wrapper, endargs, err := p.WrapUntil("else", "endifnotequal")
+	wrapper, endArgs, err := p.WrapUntil("else", "endifnotequal")
 	if err != nil {
 		return nil, err
 	}
 	ifnotequalNode.thenWrapper = wrapper
 
-	if !endargs.End() {
-		return nil, endargs.Error("Arguments not allowed here.", nil)
+	if !endArgs.End() {
+		return nil, endArgs.Error("Arguments not allowed here.", nil)
 	}
 
 	if wrapper.EndTag == "else" {
 		// if there's an else in the if-statement, we need the else-Block as well
-		wrapper, endargs, err = p.WrapUntil("endifnotequal")
+		wrapper, endArgs, err = p.WrapUntil("endifnotequal")
 		if err != nil {
 			return nil, err
 		}
 		ifnotequalNode.elseWrapper = wrapper
 
-		if !endargs.End() {
-			return nil, endargs.Error("Arguments not allowed here.", nil)
+		if !endArgs.End() {
+			return nil, endArgs.Error("Arguments not allowed here.", nil)
 		}
 	}
 

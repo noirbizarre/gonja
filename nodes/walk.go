@@ -43,7 +43,7 @@ func Walk(v Visitor, node Node) error {
 	// case *Output:
 	// 	return visitor.Output(t)
 	default:
-		return errors.Errorf("Unkown type %T", n)
+		return errors.Errorf("Unknown type %T", n)
 	}
 	return nil
 }
@@ -61,7 +61,6 @@ func (f Inspector) Visit(node Node) (Visitor, error) {
 // f(node); node must not be nil. If f returns true, Inspect invokes f
 // recursively for each of the non-nil children of node, followed by a
 // call of f(nil).
-//
 func Inspect(node Node, f func(Node) bool) {
 	Walk(Inspector(f), node)
 }

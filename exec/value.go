@@ -24,7 +24,8 @@ type Value struct {
 // through a Context or within filter functions.
 //
 // Example:
-//     AsValue("my string")
+//
+//	AsValue("my string")
 func AsValue(i interface{}) *Value {
 	return &Value{
 		Val: reflect.ValueOf(i),
@@ -123,12 +124,12 @@ func (v *Value) Error() string {
 // of type string, gonja tries to convert it. Currently the following
 // types for underlying values are supported:
 //
-//     1. string
-//     2. int/uint (any size)
-//     3. float (any precision)
-//     4. bool
-//     5. time.Time
-//     6. String() will be called on the underlying value if provided
+//  1. string
+//  2. int/uint (any size)
+//  3. float (any precision)
+//  4. bool
+//  5. time.Time
+//  6. String() will be called on the underlying value if provided
 //
 // NIL values will lead to an empty string. Unsupported types are leading
 // to their respective type name.
@@ -146,15 +147,15 @@ func (v *Value) String() string {
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		return strconv.FormatUint(resolved.Uint(), 10)
 	case reflect.Float32, reflect.Float64:
-		formated := strconv.FormatFloat(resolved.Float(), 'f', 11, 64)
-		if !strings.Contains(formated, ".") {
-			formated = formated + "."
+		formatted := strconv.FormatFloat(resolved.Float(), 'f', 11, 64)
+		if !strings.Contains(formatted, ".") {
+			formatted = formatted + "."
 		}
-		formated = strings.TrimRight(formated, "0")
-		if formated[len(formated)-1] == '.' {
-			formated += "0"
+		formatted = strings.TrimRight(formatted, "0")
+		if formatted[len(formatted)-1] == '.' {
+			formatted += "0"
 		}
-		return formated
+		return formatted
 	case reflect.Bool:
 		if v.Bool() {
 			return "True"
@@ -279,12 +280,12 @@ func (v *Value) Bool() bool {
 //
 // Returns TRUE in one the following cases:
 //
-//     * int != 0
-//     * uint != 0
-//     * float != 0.0
-//     * len(array/chan/map/slice/string) > 0
-//     * bool == true
-//     * underlying value is a struct
+//   - int != 0
+//   - uint != 0
+//   - float != 0.0
+//   - len(array/chan/map/slice/string) > 0
+//   - bool == true
+//   - underlying value is a struct
 //
 // Otherwise returns always FALSE.
 func (v *Value) IsTrue() bool {
@@ -315,7 +316,8 @@ func (v *Value) IsTrue() bool {
 // return_value.IsTrue() afterwards.
 //
 // Example:
-//     AsValue(1).Negate().IsTrue() == false
+//
+//	AsValue(1).Negate().IsTrue() == false
 func (v *Value) Negate() *Value {
 	switch v.getResolvedValue().Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
@@ -399,7 +401,8 @@ func (v *Value) Index(i int) *Value {
 // whether a struct contains of a specific field or a map contains a specific key).
 //
 // Example:
-//     AsValue("Hello, World!").Contains(AsValue("World")) == true
+//
+//	AsValue("Hello, World!").Contains(AsValue("World")) == true
 func (v *Value) Contains(other *Value) bool {
 	resolved := v.getResolvedValue()
 	switch resolved.Kind() {
@@ -457,10 +460,10 @@ func (v *Value) CanSlice() bool {
 // Iterate iterates over a map, array, slice or a string. It calls the
 // function's first argument for every value with the following arguments:
 //
-//     idx      current 0-index
-//     count    total amount of items
-//     key      *Value for the key or item
-//     value    *Value (only for maps, the respective value for a specific key)
+//	idx      current 0-index
+//	count    total amount of items
+//	key      *Value for the key or item
+//	value    *Value (only for maps, the respective value for a specific key)
 //
 // If the underlying value has no items or is not one of the types above,
 // the empty function (function's second argument) will be called.
@@ -493,7 +496,7 @@ func (v *Value) IterateOrder(fn func(idx, count int, key, value *Value) bool, em
 		}
 		keyLen := len(keys)
 		for idx, key := range keys {
-			value, _ := v.Getitem(key.Interface())
+			value, _ := v.GetItem(key.Interface())
 			if !fn(idx, keyLen, key, value) {
 				return
 			}
@@ -746,9 +749,9 @@ func ToValue(data interface{}) *Value {
 	return &Value{Val: val, Safe: isSafe}
 }
 
-func (v *Value) Getattr(name string) (*Value, bool) {
+func (v *Value) GetAttr(name string) (*Value, bool) {
 	if v.IsNil() {
-		return AsValue(errors.New(`Can't use getattr on None`)), false
+		return AsValue(errors.New(`Can't use GetAttr on None`)), false
 	}
 	var val reflect.Value
 	val = v.Val.MethodByName(name)
@@ -775,9 +778,9 @@ func (v *Value) Getattr(name string) (*Value, bool) {
 	return AsValue(nil), false // Attr not found
 }
 
-func (v *Value) Getitem(key interface{}) (*Value, bool) {
+func (v *Value) GetItem(key interface{}) (*Value, bool) {
 	if v.IsNil() {
-		return AsValue(errors.New(`Can't use Getitem on None`)), false
+		return AsValue(errors.New(`Can't use GetItem on None`)), false
 	}
 	var val reflect.Value
 	if v.Val.Kind() == reflect.Ptr {
@@ -828,9 +831,9 @@ func (v *Value) Getitem(key interface{}) (*Value, bool) {
 }
 
 func (v *Value) Get(key string) (*Value, bool) {
-	value, found := v.Getattr(key)
+	value, found := v.GetAttr(key)
 	if !found {
-		value, found = v.Getitem(key)
+		value, found = v.GetItem(key)
 	}
 	return value, found
 }
@@ -859,7 +862,7 @@ func (v *Value) Set(key string, value interface{}) error {
 	case reflect.Map:
 		val.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(value))
 	default:
-		return errors.Errorf(`Unkown type "%s", can't set value on "%s"`, val.Kind(), key)
+		return errors.Errorf(`Unknown type "%s", can't set value on "%s"`, val.Kind(), key)
 	}
 
 	return nil

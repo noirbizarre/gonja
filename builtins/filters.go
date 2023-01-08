@@ -103,7 +103,7 @@ func filterAttr(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.V
 		return exec.AsValue(errors.Wrap(p, "Wrong signature for 'attr'"))
 	}
 	attr := p.First().String()
-	value, _ := in.Getattr(attr)
+	value, _ := in.GetAttr(attr)
 	return value
 }
 
@@ -155,12 +155,12 @@ func filterCenter(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec
 		return exec.AsValue(errors.Wrap(p, "Wrong signature for 'center'"))
 	}
 	width := p.First().Integer()
-	slen := in.Len()
-	if width <= slen {
+	sLen := in.Len()
+	if width <= sLen {
 		return in
 	}
 
-	spaces := width - slen
+	spaces := width - sLen
 	left := spaces/2 + spaces%2
 	right := spaces / 2
 
@@ -944,7 +944,7 @@ func filterSum(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Va
 				sum += val.Float()
 			}
 		} else if attribute.IsInteger() {
-			value, found := key.Getitem(attribute.Integer())
+			value, found := key.GetItem(attribute.Integer())
 			if found {
 				sum += value.Float()
 			}
@@ -991,13 +991,13 @@ func filterToJSON(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec
 	if indent.IsNil() {
 		b, err := json.Marshal(in.Interface())
 		if err != nil {
-			return exec.AsValue(errors.Wrap(err, "Unable to marhsall to json"))
+			return exec.AsValue(errors.Wrap(err, "Unable to marshall to json"))
 		}
 		out = string(b)
 	} else if indent.IsInteger() {
 		b, err := json.MarshalIndent(in.Interface(), "", strings.Repeat(" ", indent.Integer()))
 		if err != nil {
-			return exec.AsValue(errors.Wrap(err, "Unable to marhsall to json"))
+			return exec.AsValue(errors.Wrap(err, "Unable to marshall to json"))
 		}
 		out = string(b)
 	} else {
@@ -1104,8 +1104,8 @@ var filterUrlizeURLRegexp = regexp.MustCompile(`((((http|https)://)|www\.|((^|[ 
 var filterUrlizeEmailRegexp = regexp.MustCompile(`(\w+@\w+\.\w{2,4})`)
 
 func filterUrlizeHelper(input string, trunc int, rel string, target string) (string, error) {
-	var soutErr error
-	sout := filterUrlizeURLRegexp.ReplaceAllStringFunc(input, func(raw_url string) string {
+	var sOutErr error
+	sOut := filterUrlizeURLRegexp.ReplaceAllStringFunc(input, func(raw_url string) string {
 		var prefix string
 		var suffix string
 		if strings.HasPrefix(raw_url, " ") {
@@ -1146,11 +1146,11 @@ func filterUrlizeHelper(input string, trunc int, rel string, target string) (str
 
 		return fmt.Sprintf(`%s<a href="%s" rel="%s"%s>%s</a>%s`, prefix, url, rel, attrs, title, suffix)
 	})
-	if soutErr != nil {
-		return "", soutErr
+	if sOutErr != nil {
+		return "", sOutErr
 	}
 
-	sout = filterUrlizeEmailRegexp.ReplaceAllStringFunc(sout, func(mail string) string {
+	sOut = filterUrlizeEmailRegexp.ReplaceAllStringFunc(sOut, func(mail string) string {
 		title := mail
 
 		if trunc > 3 && len(title) > trunc {
@@ -1159,7 +1159,7 @@ func filterUrlizeHelper(input string, trunc int, rel string, target string) (str
 
 		return fmt.Sprintf(`<a href="mailto:%s">%s</a>`, mail, title)
 	})
-	return sout, nil
+	return sOut, nil
 }
 
 func filterUrlize(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {

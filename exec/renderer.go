@@ -87,7 +87,7 @@ func (r *Renderer) FlushAndTrim(trim, lstrip bool) {
 	r.Trim.Buffer.Reset()
 }
 
-// WriteString wraps the triming policy
+// WriteString wraps the trimming policy
 func (r *Renderer) WriteString(txt string) (int, error) {
 	if r.Config.TrimBlocks {
 		txt = strings.TrimLeftFunc(txt, r.Trim.TrimBlocks)

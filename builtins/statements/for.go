@@ -212,26 +212,26 @@ func forParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 	}
 
 	// Body wrapping
-	wrapper, endargs, err := p.WrapUntil("else", "endfor")
+	wrapper, endArgs, err := p.WrapUntil("else", "endfor")
 	if err != nil {
 		return nil, err
 	}
 	stmt.bodyWrapper = wrapper
 
-	if !endargs.End() {
-		return nil, endargs.Error("Arguments not allowed here.", nil)
+	if !endArgs.End() {
+		return nil, endArgs.Error("Arguments not allowed here.", nil)
 	}
 
 	if wrapper.EndTag == "else" {
 		// if there's an else in the if-statement, we need the else-Block as well
-		wrapper, endargs, err = p.WrapUntil("endfor")
+		wrapper, endArgs, err = p.WrapUntil("endfor")
 		if err != nil {
 			return nil, err
 		}
 		stmt.emptyWrapper = wrapper
 
-		if !endargs.End() {
-			return nil, endargs.Error("Arguments not allowed here.", nil)
+		if !endArgs.End() {
+			return nil, endArgs.Error("Arguments not allowed here.", nil)
 		}
 	}
 

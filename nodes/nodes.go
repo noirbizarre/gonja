@@ -104,7 +104,7 @@ func (c *Comment) String() string {
 		u.Ellipsis(c.Text, 20), c.Start.Line, c.Start.Col)
 }
 
-// Ouput represents a printable expression node {{ }}
+// Output represents a printable expression node {{ }}
 type Output struct {
 	Start      *tokens.Token
 	Expression Expression
@@ -308,15 +308,15 @@ func (c *Call) String() string {
 	return fmt.Sprintf("Call(Args=%s Kwargs=%s Line=%d Col=%d)", c.Args, c.Kwargs, t.Line, t.Col)
 }
 
-type Getitem struct {
+type GetItem struct {
 	Location *tokens.Token
 	Node     Node
 	Arg      *Expression
 	Index    int
 }
 
-func (g *Getitem) Position() *tokens.Token { return g.Location }
-func (g *Getitem) String() string {
+func (g *GetItem) Position() *tokens.Token { return g.Location }
+func (g *GetItem) String() string {
 	t := g.Position()
 	var param string
 	if g.Arg != nil {
@@ -324,18 +324,18 @@ func (g *Getitem) String() string {
 	} else {
 		param = fmt.Sprintf(`Index=%s`, strconv.Itoa(g.Index))
 	}
-	return fmt.Sprintf("Getitem(Node=%s %s Line=%d Col=%d)", g.Node, param, t.Line, t.Col)
+	return fmt.Sprintf("GetItem(Node=%s %s Line=%d Col=%d)", g.Node, param, t.Line, t.Col)
 }
 
-type Getattr struct {
+type GetAttr struct {
 	Location *tokens.Token
 	Node     Node
 	Attr     string
 	Index    int
 }
 
-func (g *Getattr) Position() *tokens.Token { return g.Location }
-func (g *Getattr) String() string {
+func (g *GetAttr) Position() *tokens.Token { return g.Location }
+func (g *GetAttr) String() string {
 	t := g.Position()
 	var param string
 	if g.Attr != "" {
@@ -343,7 +343,7 @@ func (g *Getattr) String() string {
 	} else {
 		param = fmt.Sprintf(`Index=%s`, strconv.Itoa(g.Index))
 	}
-	return fmt.Sprintf("Getattr(Node=%s %s Line=%d Col=%d)", g.Node, param, t.Line, t.Col)
+	return fmt.Sprintf("GetAttr(Node=%s %s Line=%d Col=%d)", g.Node, param, t.Line, t.Col)
 }
 
 type Negation struct {

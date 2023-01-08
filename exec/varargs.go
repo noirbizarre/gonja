@@ -135,7 +135,7 @@ func (va *VarArgs) ExpectNothing() *ReducedVarArgs {
 	return va.ExpectArgs(0)
 }
 
-// ExpectKwArgs allow to specify optionnaly expected KwArgs
+// ExpectKwArgs allow to specify optionally expected KwArgs
 func (va *VarArgs) ExpectKwArgs(kwargs []*KwArg) *ReducedVarArgs {
 	return va.Expect(0, kwargs)
 }

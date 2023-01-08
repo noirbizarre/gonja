@@ -168,7 +168,7 @@ func TestValueGetAttr(t *testing.T) {
 			assert := assert.New(t)
 
 			value := exec.AsValue(test.value)
-			out, found := value.Getattr(test.attr)
+			out, found := value.GetAttr(test.attr)
 
 			if !test.flags.IsError && out.IsError() {
 				t.Fatalf(`Unexpected error: %s`, out.Error())
@@ -216,7 +216,7 @@ func TestValueGetitem(t *testing.T) {
 			assert := assert.New(t)
 
 			value := exec.AsValue(test.value)
-			out, found := value.Getitem(test.key)
+			out, found := value.GetItem(test.key)
 
 			if !test.flags.IsError && out.IsError() {
 				t.Fatalf(`Unexpected error: %s`, out.Error())

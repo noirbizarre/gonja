@@ -12,7 +12,7 @@ import (
 	"github.com/paradime-io/gonja/config"
 )
 
-// EOF is an arbitraty value for End Of File
+// EOF is an arbitrary value for End Of File
 const rEOF = -1
 const re_ENDRAW = `%s\s*%s`
 

@@ -35,16 +35,16 @@ func Range(va *exec.VarArgs) <-chan int {
 		// default:
 		// 	return nil, errors.New("range expect signature range([start, ]stop[, step])")
 	}
-	chnl := make(chan int)
+	ch := make(chan int)
 	go func() {
 		for i := start; i < stop; i += step {
-			chnl <- i
+			ch <- i
 		}
 
 		// Ensure that at the end of the loop we close the channel!
-		close(chnl)
+		close(ch)
 	}()
-	return chnl
+	return ch
 }
 
 func Dict(va *exec.VarArgs) *exec.Value {

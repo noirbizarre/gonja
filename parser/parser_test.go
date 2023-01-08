@@ -343,7 +343,7 @@ var testCases = []struct {
 		}},
 	}}},
 	{"variable attribute", "{{ a_var.attr }}", specs{nodes.Output{}, attrs{
-		"Expression": specs{nodes.Getattr{}, attrs{
+		"Expression": specs{nodes.GetAttr{}, attrs{
 			"Node": specs{nodes.Name{}, attrs{
 				"Name": _token("a_var"),
 			}},
@@ -452,7 +452,7 @@ var testCases = []struct {
 	}}},
 	{"method", "{{ an_obj.a_method(42) }}", specs{nodes.Output{}, attrs{
 		"Expression": specs{nodes.Call{}, attrs{
-			"Func": specs{nodes.Getattr{}, attrs{
+			"Func": specs{nodes.GetAttr{}, attrs{
 				"Node": specs{nodes.Name{}, attrs{"Name": _token("an_obj")}},
 				"Attr": val{"a_method"},
 			}},

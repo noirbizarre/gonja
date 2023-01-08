@@ -107,7 +107,7 @@ func macroParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error)
 				return nil, err
 			}
 			stmt.Kwargs = append(stmt.Kwargs, &nodes.Pair{
-				Key:   &nodes.String{argName, argName.Val},
+				Key:   &nodes.String{Location: argName, Val: argName.Val},
 				Value: expr,
 			})
 			// stmt.Kwargs[argName.Val] = expr
@@ -132,14 +132,14 @@ func macroParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error)
 	}
 
 	// Body wrapping
-	wrapper, endargs, err := p.WrapUntil("endmacro")
+	wrapper, endArgs, err := p.WrapUntil("endmacro")
 	if err != nil {
 		return nil, err
 	}
 	stmt.Wrapper = wrapper
 
-	if !endargs.End() {
-		return nil, endargs.Error("Arguments not allowed here.", nil)
+	if !endArgs.End() {
+		return nil, endArgs.Error("Arguments not allowed here.", nil)
 	}
 
 	p.Template.Macros[stmt.Name] = stmt

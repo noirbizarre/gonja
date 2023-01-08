@@ -87,7 +87,7 @@ func (p *Parser) parseList() (nodes.Expression, error) {
 
 	if p.Match(tokens.Rbracket) != nil {
 		// Empty list
-		return &nodes.List{t, []nodes.Expression{}}, nil
+		return &nodes.List{Location: t, Val: []nodes.Expression{}}, nil
 	}
 
 	expr, err := p.ParseExpressionWithInlineIfs()
@@ -115,7 +115,7 @@ func (p *Parser) parseList() (nodes.Expression, error) {
 		return nil, p.Error("Expected ]", p.Current())
 	}
 
-	return &nodes.List{t, list}, nil
+	return &nodes.List{Location: t, Val: list}, nil
 }
 
 func (p *Parser) parseTuple() (nodes.Expression, error) {
@@ -156,7 +156,7 @@ func (p *Parser) parseTuple() (nodes.Expression, error) {
 	}
 
 	if len(list) > 1 || trailingComa {
-		return &nodes.Tuple{t, list}, nil
+		return &nodes.Tuple{Location: t, Val: list}, nil
 	} else {
 		return expr, nil
 	}
@@ -248,11 +248,11 @@ func (p *Parser) ParseVariable() (nodes.Expression, error) {
 		return br, nil
 	}
 
-	var variable nodes.Node = &nodes.Name{t}
+	var variable nodes.Node = &nodes.Name{Name: t}
 
 	for !p.Stream.EOF() {
 		if dot := p.Match(tokens.Dot); dot != nil {
-			getattr := &nodes.Getattr{
+			getAttr := &nodes.GetAttr{
 				Location: dot,
 				Node:     variable,
 			}
@@ -263,31 +263,31 @@ func (p *Parser) ParseVariable() (nodes.Expression, error) {
 			}
 			switch tokenType {
 			case tokens.Name:
-				getattr.Attr = tok.Val
+				getAttr.Attr = tok.Val
 			case tokens.Integer:
 				i, err := strconv.Atoi(tok.Val)
 				if err != nil {
 					return nil, p.Error(err.Error(), tok)
 				}
-				getattr.Index = i
+				getAttr.Index = i
 			default:
 				return nil, p.Error("This token is not allowed within a variable name.", p.Current())
 			}
-			variable = getattr
+			variable = getAttr
 			continue
 		} else if bracket := p.Match(tokens.Lbracket); bracket != nil {
 			arg, argErr := p.ParseExpressionWithInlineIfs()
 			if argErr != nil {
 				return nil, argErr
 			}
-			getitem := &nodes.Getitem{
+			getItem := &nodes.GetItem{
 				Location: bracket,
 				Node:     variable,
 				Arg:      &arg,
 				Index:    0,
 			}
 
-			variable = getitem
+			variable = getItem
 			if p.Match(tokens.Rbracket) == nil {
 				return nil, p.Error("Unbalanced bracket", bracket)
 			}

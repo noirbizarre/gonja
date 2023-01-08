@@ -47,23 +47,23 @@ func (stmt *SetStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error 
 	switch n := stmt.Target.(type) {
 	case *nodes.Name:
 		r.Ctx.Set(n.Name.Val, value.Interface())
-	case *nodes.Getattr:
+	case *nodes.GetAttr:
 		target := r.Eval(n.Node)
 		if target.IsError() {
 			return errors.Wrapf(target, `Unable to evaluate target %s`, n)
 		}
 		if n.Attr == "" {
-			return errors.Errorf(`Not implemented to evaluate getattr at %d`, n.Index) // TODO: implement
+			return errors.Errorf(`Not implemented to evaluate GetAttr at %d`, n.Index) // TODO: implement
 		} else if err := target.Set(n.Attr, value.Interface()); err != nil {
 			return errors.Wrapf(err, `Unable to set value on "%s"`, n.Attr)
 		}
-	case *nodes.Getitem:
+	case *nodes.GetItem:
 		target := r.Eval(n.Node)
 		if target.IsError() {
 			return errors.Wrapf(target, `Unable to evaluate target %s`, n)
 		}
 		if n.Arg == nil {
-			return errors.Errorf(`Not implemented to evaluate getitem at %d`, n.Index) // TODO: implement
+			return errors.Errorf(`Not implemented to evaluate GetItem at %d`, n.Index) // TODO: implement
 		} else if err := target.Set(r.Eval(*n.Arg).String(), value.Interface()); err != nil {
 			return errors.Wrapf(err, `Unable to set value on "%s"`, n.Arg)
 		}
@@ -85,21 +85,21 @@ func setParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
 		return nil, errors.Wrap(err, `Unable to parse identifier`)
 	}
 	switch n := ident.(type) {
-	case *nodes.Name, *nodes.Call, *nodes.Getitem, *nodes.Getattr:
+	case *nodes.Name, *nodes.Call, *nodes.GetItem, *nodes.GetAttr:
 		stmt.Target = n
 	default:
 		return nil, errors.Errorf(`Unexpected set target %s`, n)
 	}
 
 	if args.Match(tokens.Assign) == nil {
-		wrapper, endargs, err := p.WrapUntil("endset")
+		wrapper, endArgs, err := p.WrapUntil("endset")
 		if err != nil {
 			return nil, err
 		}
 		stmt.Wrapper = wrapper
 
-		if !endargs.End() {
-			return nil, endargs.Error("Arguments not allowed here.", nil)
+		if !endArgs.End() {
+			return nil, endArgs.Error("Arguments not allowed here.", nil)
 		}
 
 		return stmt, nil

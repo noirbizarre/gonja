@@ -90,20 +90,20 @@ func blockParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error)
 		return nil, errors.New("Tag 'block' takes exactly 1 argument (an identifier).")
 	}
 
-	wrapper, endargs, err := p.WrapUntil("endblock")
+	wrapper, endArgs, err := p.WrapUntil("endblock")
 	if err != nil {
 		return nil, err
 	}
-	if !endargs.End() {
-		endName := endargs.Match(tokens.Name)
+	if !endArgs.End() {
+		endName := endArgs.Match(tokens.Name)
 		if endName != nil {
-			if endName.Val != endName.Val {
+			if name.Val != endName.Val {
 				return nil, errors.Errorf(`Name for 'endblock' must equal to 'block'-tag's name ('%s' != '%s').`,
 					name.Val, endName.Val)
 			}
 		}
 
-		if endName == nil || !endargs.End() {
+		if endName == nil || !endArgs.End() {
 			return nil, errors.New("Either no or only one argument (identifier) allowed for 'endblock'.")
 		}
 	}

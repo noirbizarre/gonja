@@ -41,7 +41,7 @@ func (stmt *NowStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error 
 	var now arrow.Arrow
 
 	cfg := r.Config.Ext["time"].(*Config)
-	format := cfg.DatetimeFormat
+	format := cfg.DateTimeFormat
 
 	if cfg.Now != nil {
 		now = *cfg.Now

@@ -51,7 +51,7 @@ func testVAGetKwarg(t *testing.T) {
 		kwarg := va.GetKwarg("key", "not found")
 		assert.Equal(42, kwarg.Integer())
 	})
-	t.Run("defaut if missing", func(t *testing.T) {
+	t.Run("default if missing", func(t *testing.T) {
 		defer failsafe(t)
 		assert := assert.New(t)
 
@@ -319,7 +319,7 @@ func testVAExpect(t *testing.T) {
 			})
 		}
 	})
-	t.Run("mixed argmuents", func(t *testing.T) {
+	t.Run("mixed arguments", func(t *testing.T) {
 		for _, tc := range mixedArgsKwargsCases {
 			test := tc
 			t.Run(test.name, func(t *testing.T) {

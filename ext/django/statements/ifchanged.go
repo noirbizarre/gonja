@@ -103,26 +103,26 @@ func ifchangedParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, er
 	}
 
 	// Wrap then/else-blocks
-	wrapper, endargs, err := p.WrapUntil("else", "endifchanged")
+	wrapper, endArgs, err := p.WrapUntil("else", "endifchanged")
 	if err != nil {
 		return nil, err
 	}
 	stmt.thenWrapper = wrapper
 
-	if !endargs.End() {
-		return nil, endargs.Error("Arguments not allowed here.", nil)
+	if !endArgs.End() {
+		return nil, endArgs.Error("Arguments not allowed here.", nil)
 	}
 
 	if wrapper.EndTag == "else" {
 		// if there's an else in the if-statement, we need the else-Block as well
-		wrapper, endargs, err = p.WrapUntil("endifchanged")
+		wrapper, endArgs, err = p.WrapUntil("endifchanged")
 		if err != nil {
 			return nil, err
 		}
 		stmt.elseWrapper = wrapper
 
-		if !endargs.End() {
-			return nil, endargs.Error("Arguments not allowed here.", nil)
+		if !endArgs.End() {
+			return nil, endArgs.Error("Arguments not allowed here.", nil)
 		}
 	}
 

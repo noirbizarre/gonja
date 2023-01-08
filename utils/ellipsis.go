@@ -5,5 +5,5 @@ func Ellipsis(text string, length int) string {
 	if len(runes) <= length {
 		return text
 	}
-	return string(runes[:length - 1]) + "…"
+	return string(runes[:length-1]) + "…"
 }

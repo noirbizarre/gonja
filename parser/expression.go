@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// ParseFilterExpression parses an optionnal filter chain for a node
+// ParseFilterExpression parses an optional filter chain for a node
 func (p *Parser) ParseFilterExpression(expr nodes.Expression) (nodes.Expression, error) {
 	log.WithFields(log.Fields{
 		"current": p.Current(),
@@ -41,7 +41,7 @@ func (p *Parser) ParseFilterExpression(expr nodes.Expression) (nodes.Expression,
 }
 
 // ParseExpression parses an expression with optional filters
-// Nested expression shoulds call this method
+// Nested expression should call this method
 
 func (p *Parser) ParseExpression() (nodes.Expression, error) {
 	return p.parseExpression(false)

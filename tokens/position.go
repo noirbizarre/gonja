@@ -12,7 +12,6 @@ type Pos interface {
 // Position describes an arbitrary source position
 // including the file, line, and column location.
 // A Position is valid if the line number is > 0.
-//
 type Position struct {
 	Filename string // filename, if any
 	Offset   int    // offset, starting at 0
@@ -34,7 +33,6 @@ func (pos *Position) Pos() int { return pos.Offset }
 //	line                valid position without file name and no column (column == 0)
 //	file                invalid position with file name
 //	-                   invalid position without file name
-//
 func (pos Position) String() string {
 	s := pos.Filename
 	if pos.IsValid() {

@@ -29,14 +29,14 @@ var Filters = exec.FilterSet{
 	"date":               filterDate,
 	"default_if_none":    filterDefaultIfNone,
 	"floatformat":        filterFloatformat,
-	"get_digit":          filterGetdigit,
+	"get_digit":          filterGetDigit,
 	"iriencode":          filterIriencode,
-	"length_is":          filterLengthis,
+	"length_is":          filterLengthIs,
 	"linebreaks":         filterLinebreaks,
 	"linebreaksbr":       filterLinebreaksbr,
 	"linenumbers":        filterLinenumbers,
 	"ljust":              filterLjust,
-	"make_list":          filterMakelist,
+	"make_list":          filterMakeList,
 	"phone2numeric":      filterPhone2numeric,
 	"pluralize":          filterPluralize,
 	"removetags":         filterRemovetags,
@@ -181,17 +181,17 @@ func filterTruncatecharsHTML(e *exec.Evaluator, in *exec.Value, params *exec.Var
 
 	newOutput := bytes.NewBuffer(nil)
 
-	textcounter := 0
+	textCounter := 0
 
 	filterTruncateHTMLHelper(value, newOutput, func() bool {
-		return textcounter >= newLen
+		return textCounter >= newLen
 	}, func(c rune, s int, idx int) int {
-		textcounter++
+		textCounter++
 		newOutput.WriteRune(c)
 
 		return idx + s
 	}, func() {
-		if textcounter >= newLen && textcounter < len(value) {
+		if textCounter >= newLen && textCounter < len(value) {
 			newOutput.WriteString("...")
 		}
 	})
@@ -205,9 +205,9 @@ func filterTruncatewords(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs
 	if n <= 0 {
 		return exec.AsValue("")
 	}
-	nlen := u.Min(len(words), n)
-	out := make([]string, 0, nlen)
-	for i := 0; i < nlen; i++ {
+	nLen := u.Min(len(words), n)
+	out := make([]string, 0, nLen)
+	for i := 0; i < nLen; i++ {
 		out = append(out, words[i])
 	}
 
@@ -224,10 +224,10 @@ func filterTruncatewordsHTML(e *exec.Evaluator, in *exec.Value, params *exec.Var
 
 	newOutput := bytes.NewBuffer(nil)
 
-	wordcounter := 0
+	wordCounter := 0
 
 	filterTruncateHTMLHelper(value, newOutput, func() bool {
-		return wordcounter >= newLen
+		return wordCounter >= newLen
 	}, func(_ rune, _ int, idx int) int {
 		// Get next word
 		wordFound := false
@@ -256,12 +256,12 @@ func filterTruncatewordsHTML(e *exec.Evaluator, in *exec.Value, params *exec.Var
 		}
 
 		if wordFound {
-			wordcounter++
+			wordCounter++
 		}
 
 		return idx
 	}, func() {
-		if wordcounter >= newLen {
+		if wordCounter >= newLen {
 			newOutput.WriteString("...")
 		}
 	})
@@ -342,7 +342,7 @@ func filterCut(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Va
 	return exec.AsValue(strings.Replace(in.String(), params.Args[0].String(), "", -1))
 }
 
-func filterLengthis(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
+func filterLengthIs(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
 	return exec.AsValue(in.Len() == params.Args[0].Integer())
 }
 
@@ -384,12 +384,12 @@ func filterFloatformat(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) 
 	return exec.AsValue(strconv.FormatFloat(val, 'f', decimals, 64))
 }
 
-func filterGetdigit(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
+func filterGetDigit(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
 	if len(params.Args) > 1 {
-		return exec.AsValue(errors.New("'getdigit' filter expect one and only one argument"))
+		return exec.AsValue(errors.New("'get_digit' filter expect one and only one argument"))
 		// return nil, &Error{
-		// 	Sender:    "filter:getdigit",
-		// 	OrigError: errors.New("'getdigit' filter expect one and only one argument"),
+		// 	Sender:    "filter:getDigit",
+		// 	OrigError: errors.New("'getDigit' filter expect one and only one argument"),
 		// }
 	}
 	param := params.First()
@@ -405,7 +405,7 @@ func filterIriencode(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *e
 	return exec.AsValue(u.IRIEncode(in.String()))
 }
 
-func filterMakelist(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
+func filterMakeList(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
 	s := in.String()
 	result := make([]string, 0, len(s))
 	for _, c := range s {
@@ -445,7 +445,7 @@ func filterLinebreaks(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *
 	// Newline = <br />
 	// Double newline = <p>...</p>
 	lines := strings.Split(in.String(), "\n")
-	lenlines := len(lines)
+	lenLines := len(lines)
 
 	opened := false
 
@@ -458,7 +458,7 @@ func filterLinebreaks(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *
 
 		b.WriteString(line)
 
-		if idx < lenlines-1 && strings.TrimSpace(lines[idx]) != "" {
+		if idx < lenLines-1 && strings.TrimSpace(lines[idx]) != "" {
 			// We've not reached the end
 			if strings.TrimSpace(lines[idx+1]) == "" {
 				// Next line is empty
@@ -587,10 +587,10 @@ func filterRjust(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.
 func filterYesno(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
 	if len(params.Args) > 1 {
 		// return nil, &Error{
-		// 	Sender:    "filter:getdigit",
-		// 	OrigError: errors.New("'getdigit' filter expect one and only one argument"),
+		// 	Sender:    "filter:filterYesno",
+		// 	OrigError: errors.New("'filterYesno' filter expect one and only one argument"),
 		// }
-		return exec.AsValue(errors.New("'getdigit' filter expect one and only one argument"))
+		return exec.AsValue(errors.New("'yesno' filter expect one and only one argument"))
 	}
 	choices := map[int]string{
 		0: "yes",

@@ -25,7 +25,8 @@ var (
 
 // Must panics, if a Template couldn't successfully parsed. This is how you
 // would use it:
-//     var baseTemplate = gonja.Must(gonja.FromFile("templates/base.html"))
+//
+//	var baseTemplate = gonja.Must(gonja.FromFile("templates/base.html"))
 func Must(tpl *exec.Template, err error) *exec.Template {
 	if err != nil {
 		panic(err)

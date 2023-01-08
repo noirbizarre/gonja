@@ -8,21 +8,21 @@ import (
 
 type Config struct {
 	// Default format
-	DatetimeFormat string
+	DateTimeFormat string
 	// If defined, now returns this parsed value
 	Now *arrow.Arrow
 }
 
 func NewConfig() *Config {
 	return &Config{
-		DatetimeFormat: "%Y-%m-%d",
+		DateTimeFormat: "%Y-%m-%d",
 		Now:            nil,
 	}
 }
 
 func (cfg *Config) Inherit() config.Inheritable {
 	return &Config{
-		DatetimeFormat: cfg.DatetimeFormat,
+		DateTimeFormat: cfg.DateTimeFormat,
 		Now:            cfg.Now,
 	}
 }

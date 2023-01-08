@@ -54,10 +54,10 @@ func (e *Evaluator) Eval(node nodes.Expression) *Value {
 		return e.evalName(n)
 	case *nodes.Call:
 		return e.evalCall(n)
-	case *nodes.Getitem:
-		return e.evalGetitem(n)
-	case *nodes.Getattr:
-		return e.evalGetattr(n)
+	case *nodes.GetItem:
+		return e.evalGetItem(n)
+	case *nodes.GetAttr:
+		return e.evalGetAttr(n)
 	case *nodes.Negation:
 		result := e.Eval(n.Term)
 		if result.IsError() {
@@ -94,7 +94,7 @@ func (e *Evaluator) evalBinaryExpression(node *nodes.BinaryExpression) *Value {
 	}
 
 	switch node.Operator.Token.Val {
-	// These operators allow lazy right expression evluation
+	// These operators allow lazy right expression evaluation
 	case "and", "or":
 	default:
 		right = e.Eval(node.Right)
@@ -278,7 +278,7 @@ func (e *Evaluator) evalName(node *nodes.Name) *Value {
 	return ToValue(val)
 }
 
-func (e *Evaluator) evalGetitem(node *nodes.Getitem) *Value {
+func (e *Evaluator) evalGetItem(node *nodes.GetItem) *Value {
 	value := e.Eval(node.Node)
 	if value.IsError() {
 		return AsValue(errors.Wrapf(value, `Unable to evaluate target %s`, node.Node))
@@ -286,9 +286,9 @@ func (e *Evaluator) evalGetitem(node *nodes.Getitem) *Value {
 
 	if node.Arg != nil {
 		key := e.Eval(*node.Arg).String()
-		item, found := value.Getitem(key)
+		item, found := value.GetItem(key)
 		if !found {
-			item, found = value.Getattr(key)
+			item, found = value.GetAttr(key)
 		}
 		if !found {
 			if item.IsError() {
@@ -299,7 +299,7 @@ func (e *Evaluator) evalGetitem(node *nodes.Getitem) *Value {
 		}
 		return item
 	} else {
-		item, found := value.Getitem(node.Index)
+		item, found := value.GetItem(node.Index)
 		if !found {
 			if item.IsError() {
 				return AsValue(errors.Wrapf(item, `Unable to evaluate %s`, node))
@@ -309,19 +309,18 @@ func (e *Evaluator) evalGetitem(node *nodes.Getitem) *Value {
 		}
 		return item
 	}
-	return AsValue(errors.Errorf(`Unable to evaluate %s`, node))
 }
 
-func (e *Evaluator) evalGetattr(node *nodes.Getattr) *Value {
+func (e *Evaluator) evalGetAttr(node *nodes.GetAttr) *Value {
 	value := e.Eval(node.Node)
 	if value.IsError() {
 		return AsValue(errors.Wrapf(value, `Unable to evaluate target %s`, node.Node))
 	}
 
 	if node.Attr != "" {
-		attr, found := value.Getattr(node.Attr)
+		attr, found := value.GetAttr(node.Attr)
 		if !found {
-			attr, found = value.Getitem(node.Attr)
+			attr, found = value.GetItem(node.Attr)
 		}
 		if !found {
 			if attr.IsError() {
@@ -332,7 +331,7 @@ func (e *Evaluator) evalGetattr(node *nodes.Getattr) *Value {
 		}
 		return attr
 	} else {
-		item, found := value.Getitem(node.Index)
+		item, found := value.GetItem(node.Index)
 		if !found {
 			if item.IsError() {
 				return AsValue(errors.Wrapf(item, `Unable to evaluate %s`, node))
@@ -342,7 +341,6 @@ func (e *Evaluator) evalGetattr(node *nodes.Getattr) *Value {
 		}
 		return item
 	}
-	return AsValue(errors.Errorf(`Unable to evaluate %s`, node))
 }
 
 func (e *Evaluator) evalCall(node *nodes.Call) *Value {
