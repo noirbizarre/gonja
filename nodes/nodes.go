@@ -203,6 +203,15 @@ func (n *Name) String() string {
 	return n.Position().Val
 }
 
+type None struct {
+	Location *tokens.Token
+}
+
+func (n *None) Position() *tokens.Token { return n.Location }
+func (n *None) String() string {
+	return n.Location.Val
+}
+
 type List struct {
 	Location *tokens.Token
 	Val      []Expression

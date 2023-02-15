@@ -34,6 +34,8 @@ func (r *Renderer) Eval(node nodes.Expression) *Value {
 
 func (e *Evaluator) Eval(node nodes.Expression) *Value {
 	switch n := node.(type) {
+	case *nodes.None:
+		return AsValue(nil)
 	case *nodes.String:
 		return AsValue(n.Val)
 	case *nodes.Integer:

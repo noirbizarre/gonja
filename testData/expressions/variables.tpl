@@ -3,6 +3,8 @@
 {{ "hallo" }}
 {{ true }}
 {{ false }}
+{{ None }}
+{{ nil }}
 {{ simple.uint }}
 {{ simple['uint'] }}
 {{ simple.nil }}

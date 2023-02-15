@@ -238,6 +238,11 @@ func (p *Parser) ParseVariable() (nodes.Expression, error) {
 			Val:      true,
 		}
 		return br, nil
+	case "nil", "None":
+		br := &nodes.None{
+			Location: t,
+		}
+		return br, nil
 	case "false", "False":
 		br := &nodes.Bool{
 			Location: t,
