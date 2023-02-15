@@ -110,3 +110,7 @@ func (env *Environment) FromFile(filename string) (*exec.Template, error) {
 func (env *Environment) GetTemplate(filename string) (*exec.Template, error) {
 	return env.FromFile(filename)
 }
+
+func (env *Environment) Path(path string) (string, error) {
+	return env.Loader.Path(path)
+}

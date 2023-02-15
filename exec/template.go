@@ -14,6 +14,7 @@ import (
 
 type TemplateLoader interface {
 	GetTemplate(string) (*Template, error)
+	Path(string) (string, error)
 }
 
 type Template struct {

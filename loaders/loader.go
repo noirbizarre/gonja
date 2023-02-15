@@ -12,4 +12,7 @@ type Loader interface {
 
 	// Get returns an io.Reader where the template's content can be read from.
 	Get(path string) (io.Reader, error)
+
+	// Resolve the given path in the current context
+	Path(path string) (string, error)
 }
