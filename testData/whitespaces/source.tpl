@@ -34,9 +34,5 @@ Trim everything:
 !
     {% if true %}LStrip ?{% endif %}
 !   {% if true %}LStrip with char?{% endif %}
-!
-    {%+ if true %}Manully Disabled LStrip{% endif %}
-!   {%+ if true %}Manully Disabled LStrip{% endif %}
 ---
-
 
