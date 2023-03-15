@@ -6,9 +6,9 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/noirbizarre/gonja"
+	"github.com/nikolalohinski/gonja"
 
-	tu "github.com/noirbizarre/gonja/testutils"
+	tu "github.com/nikolalohinski/gonja/testutils"
 )
 
 func BenchmarkFromCache(b *testing.B) {

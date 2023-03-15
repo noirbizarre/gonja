@@ -3,10 +3,10 @@ package statements
 import (
 	"fmt"
 
-	"github.com/noirbizarre/gonja/exec"
-	"github.com/noirbizarre/gonja/nodes"
-	"github.com/noirbizarre/gonja/parser"
-	"github.com/noirbizarre/gonja/tokens"
+	"github.com/nikolalohinski/gonja/exec"
+	"github.com/nikolalohinski/gonja/nodes"
+	"github.com/nikolalohinski/gonja/parser"
+	"github.com/nikolalohinski/gonja/tokens"
 )
 
 type cycleValue struct {

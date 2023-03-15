@@ -1,7 +1,7 @@
 package gonja
 
 // import (
-// 	"github.com/noirbizarre/gonja/exec"
+// 	"github.com/nikolalohinski/gonja/exec"
 // )
 
 type Context map[string]interface{}

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/noirbizarre/gonja"
-	"github.com/noirbizarre/gonja/exec"
+	"github.com/nikolalohinski/gonja"
+	"github.com/nikolalohinski/gonja/exec"
 )
 
 var adminList = []string{"user2"}

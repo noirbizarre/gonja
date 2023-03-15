@@ -13,10 +13,10 @@ import (
 
 	"github.com/pmezard/go-difflib/difflib"
 
-	"github.com/noirbizarre/gonja"
-	"github.com/noirbizarre/gonja/loaders"
+	"github.com/nikolalohinski/gonja"
+	"github.com/nikolalohinski/gonja/loaders"
 
-	u "github.com/noirbizarre/gonja/utils"
+	u "github.com/nikolalohinski/gonja/utils"
 )
 
 func TestEnv(root string) *gonja.Environment {

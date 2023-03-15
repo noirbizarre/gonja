@@ -4,9 +4,9 @@ import (
 	// "bufio"
 	// "fmt"
 	// "os"
-	"github.com/pkg/errors"
 	"github.com/goph/emperror"
-	"github.com/noirbizarre/gonja/tokens"
+	"github.com/nikolalohinski/gonja/tokens"
+	"github.com/pkg/errors"
 )
 
 // Error produces a nice error message and returns an error-object.

@@ -6,11 +6,11 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/noirbizarre/gonja"
-	"github.com/noirbizarre/gonja/config"
+	"github.com/nikolalohinski/gonja"
+	"github.com/nikolalohinski/gonja/config"
 	"github.com/pmezard/go-difflib/difflib"
 
-	tu "github.com/noirbizarre/gonja/testutils"
+	tu "github.com/nikolalohinski/gonja/testutils"
 )
 
 var testCases = []struct {

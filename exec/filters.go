@@ -3,7 +3,7 @@ package exec
 import (
 	"github.com/pkg/errors"
 
-	"github.com/noirbizarre/gonja/nodes"
+	"github.com/nikolalohinski/gonja/nodes"
 )
 
 // FilterFunction is the type filter functions must fulfil
