@@ -50,8 +50,4 @@ Trim everything:
 !
     LStrip ?
 !   LStrip with char?
-!
-    Manully Disabled LStrip
-!   Manully Disabled LStrip
 ---
-

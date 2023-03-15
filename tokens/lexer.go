@@ -293,7 +293,7 @@ func (l *Lexer) lexVariableEnd() lexFn {
 
 func (l *Lexer) lexBlock() lexFn {
 	l.Pos += len(l.Config.BlockStartString)
-	l.accept("+-")
+	l.accept("-")
 	l.emit(BlockBegin)
 	for isSpace(l.peek()) {
 		l.next()

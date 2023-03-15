@@ -30,6 +30,4 @@ Cycle with whitespace control:
 
 Trim everything:
 11235813213455!
-    LStrip ?!   LStrip with char?!
-    Manully Disabled LStrip!   Manully Disabled LStrip---
-
+    LStrip ?!   LStrip with char?---
