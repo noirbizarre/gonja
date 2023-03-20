@@ -119,6 +119,60 @@ func (v *Value) Error() string {
 	return ""
 }
 
+func (v *Value) ToGoSimpleType() interface{} {
+	switch {
+	case v.IsError():
+		return errors.New(v.Error())
+	case v.IsNil():
+		return nil
+	case v.IsBool():
+		return v.Bool()
+	case v.IsFloat():
+		return v.Float()
+	case v.IsInteger():
+		return v.Integer()
+	case v.IsString():
+		return v.String()
+	case v.IsList():
+		var err error
+		list := make([]interface{}, 0)
+		v.Iterate(func(_, _ int, element, _ *Value) bool {
+			casted := element.ToGoSimpleType()
+			var isError bool
+			if err, isError = casted.(error); isError {
+				return false
+			}
+			list = append(list, casted)
+			return true
+		}, func() {})
+		if err != nil {
+			return err
+		}
+		return list
+	case v.IsIterable():
+		var err error
+		object := make(map[interface{}]interface{})
+		v.Iterate(func(_, _ int, key, value *Value) bool {
+			var isError bool
+			castedKey := key.ToGoSimpleType()
+			castedValue := value.ToGoSimpleType()
+			if err, isError = castedKey.(error); isError {
+				return false
+			}
+			if err, isError = castedValue.(error); isError {
+				return false
+			}
+			object[castedKey] = castedValue
+			return true
+		}, func() {})
+		if err != nil {
+			return err
+		}
+		return object
+	}
+	return v.Val.Interface()
+}
+
 // String returns a string for the underlying value. If this value is not
 // of type string, gonja tries to convert it. Currently the following
 // types for underlying values are supported:

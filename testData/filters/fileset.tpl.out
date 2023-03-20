@@ -1,0 +1,5 @@
+
+folder: fileset
+file: some.txt
+folder: nested
+file: other.txt
