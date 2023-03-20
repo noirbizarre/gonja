@@ -1,0 +1,16 @@
+{}
+
+simple:
+  nested: field
+
+- array
+
+string
+
+42
+
+indented:
+    4: spaces
+
+indented:
+    4: spaces
