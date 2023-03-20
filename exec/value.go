@@ -345,11 +345,18 @@ func (v *Value) Negate() *Value {
 // Otherwise it will return 0.
 func (v *Value) Len() int {
 	switch v.getResolvedValue().Kind() {
-	case reflect.Array, reflect.Chan, reflect.Map, reflect.Slice:
+	case reflect.Array, reflect.Chan, reflect.Slice:
 		return v.getResolvedValue().Len()
+	case reflect.Map:
+		return len(v.Keys())
 	case reflect.String:
 		runes := []rune(v.getResolvedValue().String())
 		return len(runes)
+	case reflect.Struct:
+		if v.getResolvedValue().Type() == TypeDict {
+			return len(v.Keys())
+		}
+		fallthrough
 	default:
 		log.Errorf("Value.Len() not available for type: %s\n", v.getResolvedValue().Kind().String())
 		return 0
