@@ -76,7 +76,8 @@ type Trim struct {
 }
 
 type Data struct {
-	Data *tokens.Token // data token
+	Data *tokens.Token
+	Trim Trim
 }
 
 func (d *Data) Position() *tokens.Token { return d.Data }
@@ -91,7 +92,6 @@ type Comment struct {
 	Start *tokens.Token // Opening token
 	Text  string        // Comment text
 	End   *tokens.Token // Closing token
-	Trim  *Trim
 }
 
 func (c *Comment) Position() *tokens.Token { return c.Start }
@@ -106,7 +106,6 @@ type Output struct {
 	Start      *tokens.Token
 	Expression Expression
 	End        *tokens.Token
-	Trim       *Trim
 }
 
 func (o *Output) Position() *tokens.Token { return o.Start }
@@ -381,8 +380,6 @@ type StatementBlock struct {
 	Location *tokens.Token
 	Name     string
 	Stmt     Statement
-	Trim     *Trim
-	LStrip   bool
 }
 
 func (s StatementBlock) Position() *tokens.Token { return s.Location }

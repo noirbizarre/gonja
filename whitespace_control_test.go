@@ -2,7 +2,6 @@ package gonja_test
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -16,13 +15,13 @@ import (
 )
 
 func TestWhiteSpace(t *testing.T) {
-	files, err := filepath.Glob("testData/whitspace/*.tpl")
+	files, err := filepath.Glob("testData/whitespaces/*.tpl")
 	if err != nil {
 		panic(err)
 	}
 	for _, path := range files {
 		source := path
-		result := path + ".out"
+		output := path + ".out"
 		name := strings.TrimSuffix(filepath.Base(source), ".tpl")
 		t.Run(name, func(t *testing.T) {
 			defer func() {
@@ -37,7 +36,6 @@ func TestWhiteSpace(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Error on FromFile('%s'): %s", source, err.Error())
 			}
-			output := fmt.Sprintf(result, name)
 			expected, rerr := ioutil.ReadFile(output)
 			if rerr != nil {
 				t.Fatalf("Error on ReadFile('%s'): %s", output, rerr.Error())

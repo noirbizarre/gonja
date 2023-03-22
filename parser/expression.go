@@ -76,9 +76,6 @@ func (p *Parser) ParseExpressionNode() (nodes.Node, error) {
 
 	node := &nodes.Output{
 		Start: tok,
-		Trim: &nodes.Trim{
-			Left: tok.Val[len(tok.Val)-1] == '-',
-		},
 	}
 
 	expr, err := p.ParseExpression()
@@ -95,7 +92,9 @@ func (p *Parser) ParseExpressionNode() (nodes.Node, error) {
 		return nil, p.Error("'}}' expected here", p.Current())
 	}
 	node.End = tok
-	node.Trim.Right = tok.Val[0] == '-'
+	if data := p.Current(tokens.Data); data != nil {
+		data.Trim = data.Trim || len(node.End.Val) > 0 && node.End.Val[0] == '-'
+	}
 
 	log.WithFields(log.Fields{
 		"node": node,

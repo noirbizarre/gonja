@@ -8,28 +8,6 @@ import (
 	"github.com/nikolalohinski/gonja/nodes"
 )
 
-// TrimState stores and apply trim policy
-type TrimState struct {
-	Should      bool
-	ShouldBlock bool
-	Buffer      *strings.Builder
-}
-
-func (ts *TrimState) TrimBlocks(r rune) bool {
-	if ts.ShouldBlock {
-		switch r {
-		case '\n':
-			ts.ShouldBlock = false
-			return true
-		case ' ', '\t':
-			return true
-		default:
-			return false
-		}
-	}
-	return false
-}
-
 // Renderer is a node visitor in charge of rendering
 type Renderer struct {
 	*EvalConfig
@@ -37,19 +15,16 @@ type Renderer struct {
 	Template *Template
 	Root     *nodes.Template
 	Out      *strings.Builder
-	Trim     *TrimState
 }
 
 // NewRenderer initialize a new renderer
 func NewRenderer(ctx *Context, out *strings.Builder, cfg *EvalConfig, tpl *Template) *Renderer {
-	var buffer strings.Builder
 	r := &Renderer{
 		EvalConfig: cfg,
 		Ctx:        ctx,
 		Template:   tpl,
 		Root:       tpl.Root,
 		Out:        out,
-		Trim:       &TrimState{Buffer: &buffer},
 	}
 	r.Ctx.Set("self", Self(r))
 	return r
@@ -63,85 +38,39 @@ func (r *Renderer) Inherit() *Renderer {
 		Template:   r.Template,
 		Root:       r.Root,
 		Out:        r.Out,
-		Trim:       r.Trim,
 	}
 	return sub
-}
-
-func (r *Renderer) Flush(lstrip bool) {
-	r.FlushAndTrim(false, lstrip)
-}
-
-func (r *Renderer) FlushAndTrim(trim, lstrip bool) {
-	txt := r.Trim.Buffer.String()
-	if trim {
-		txt = strings.TrimRight(txt, " \t\n")
-	}
-	r.Out.WriteString(txt)
-	r.Trim.Buffer.Reset()
-}
-
-// WriteString wraps the triming policy
-func (r *Renderer) WriteString(txt string) (int, error) {
-	if r.Trim.Should {
-		txt = strings.TrimLeft(txt, " \t\n")
-		if len(txt) > 0 {
-			r.Trim.Should = false
-		}
-	}
-	return r.Trim.Buffer.WriteString(txt)
-}
-
-// RenderValue properly render a value
-func (r *Renderer) RenderValue(value *Value) {
-	if r.Autoescape && value.IsString() && !value.Safe {
-		r.WriteString(value.Escaped())
-	} else {
-		r.WriteString(value.String())
-	}
-}
-
-func (r *Renderer) StartTag(trim *nodes.Trim, lstrip bool) {
-	if trim == nil {
-		r.Flush(lstrip)
-	} else {
-		r.FlushAndTrim(trim.Left, lstrip)
-	}
-	r.Trim.Should = false
-}
-
-func (r *Renderer) EndTag(trim *nodes.Trim) {
-	if trim == nil {
-		return
-	}
-	r.Trim.Should = trim.Right
-}
-
-func (r *Renderer) Tag(trim *nodes.Trim, lstrip bool) {
-	r.StartTag(trim, lstrip)
-	r.EndTag(trim)
 }
 
 // Visit implements the nodes.Visitor interface
 func (r *Renderer) Visit(node nodes.Node) (nodes.Visitor, error) {
 	switch n := node.(type) {
 	case *nodes.Comment:
-		r.Tag(n.Trim, false)
 		return nil, nil
 	case *nodes.Data:
-		r.WriteString(n.Data.Val)
-		return nil, nil
+		output := n.Data.Val
+		if n.Trim.Left {
+			output = strings.TrimLeft(output, " \n\t")
+		}
+		if n.Trim.Right {
+			output = strings.TrimRight(output, " \n\t")
+		}
+		_, err := r.Out.WriteString(output)
+		return nil, err
 	case *nodes.Output:
-		r.StartTag(n.Trim, false)
 		value := r.Eval(n.Expression)
 		if value.IsError() {
 			return nil, errors.Wrapf(value, `Unable to render expression at line %d: %s`, n.Expression.Position().Line, n.Expression)
 		}
-		r.RenderValue(value)
-		r.EndTag(n.Trim)
-		return nil, nil
+		var err error
+		if r.Autoescape && value.IsString() && !value.Safe {
+			_, err = r.Out.WriteString(value.Escaped())
+		} else {
+			_, err = r.Out.WriteString(value.String())
+
+		}
+		return nil, err
 	case *nodes.StatementBlock:
-		r.Tag(n.Trim, n.LStrip)
 		stmt, ok := n.Stmt.(Statement)
 		if ok {
 			if err := stmt.Execute(r, n); err != nil {
@@ -156,13 +85,7 @@ func (r *Renderer) Visit(node nodes.Node) (nodes.Visitor, error) {
 
 // ExecuteWrapper wraps the nodes.Wrapper execution logic
 func (r *Renderer) ExecuteWrapper(wrapper *nodes.Wrapper) error {
-	sub := r.Inherit()
-	err := nodes.Walk(sub, wrapper)
-	sub.Tag(wrapper.Trim, wrapper.LStrip)
-	return err
-}
-
-func (r *Renderer) LStrip() {
+	return nodes.Walk(r.Inherit(), wrapper)
 }
 
 func (r *Renderer) Execute() error {
@@ -172,15 +95,9 @@ func (r *Renderer) Execute() error {
 		root = root.Parent
 	}
 
-	err := nodes.Walk(r, root)
-	if err == nil {
-		r.Flush(false)
-	}
-	return err
+	return nodes.Walk(r, root)
 }
 
 func (r *Renderer) String() string {
-	r.Flush(false)
-	out := r.Out.String()
-	return out
+	return r.Out.String()
 }

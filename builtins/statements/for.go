@@ -114,7 +114,6 @@ func (node *ForStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) (forEr
 		index0: -1,
 	}
 	for idx, pair := range items.Pairs {
-		r.EndTag(tag.Trim)
 		sub := r.Inherit()
 		ctx := sub.Ctx
 
