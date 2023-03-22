@@ -74,12 +74,6 @@ func (r *Renderer) Flush(lstrip bool) {
 
 func (r *Renderer) FlushAndTrim(trim, lstrip bool) {
 	txt := r.Trim.Buffer.String()
-	if r.Config.LstripBlocks && !lstrip {
-		lines := strings.Split(txt, "\n")
-		last := lines[len(lines)-1]
-		lines[len(lines)-1] = strings.TrimLeft(last, " \t")
-		txt = strings.Join(lines, "\n")
-	}
 	if trim {
 		txt = strings.TrimRight(txt, " \t\n")
 	}
@@ -89,9 +83,6 @@ func (r *Renderer) FlushAndTrim(trim, lstrip bool) {
 
 // WriteString wraps the triming policy
 func (r *Renderer) WriteString(txt string) (int, error) {
-	if r.Config.TrimBlocks {
-		txt = strings.TrimLeftFunc(txt, r.Trim.TrimBlocks)
-	}
 	if r.Trim.Should {
 		txt = strings.TrimLeft(txt, " \t\n")
 		if len(txt) > 0 {
@@ -151,7 +142,6 @@ func (r *Renderer) Visit(node nodes.Node) (nodes.Visitor, error) {
 		return nil, nil
 	case *nodes.StatementBlock:
 		r.Tag(n.Trim, n.LStrip)
-		r.Trim.ShouldBlock = r.Config.TrimBlocks
 		stmt, ok := n.Stmt.(Statement)
 		if ok {
 			if err := stmt.Execute(r, n); err != nil {
@@ -169,7 +159,6 @@ func (r *Renderer) ExecuteWrapper(wrapper *nodes.Wrapper) error {
 	sub := r.Inherit()
 	err := nodes.Walk(sub, wrapper)
 	sub.Tag(wrapper.Trim, wrapper.LStrip)
-	r.Trim.ShouldBlock = r.Config.TrimBlocks
 	return err
 }
 
@@ -193,8 +182,5 @@ func (r *Renderer) Execute() error {
 func (r *Renderer) String() string {
 	r.Flush(false)
 	out := r.Out.String()
-	if !r.Config.KeepTrailingNewline {
-		out = strings.TrimSuffix(out, "\n")
-	}
 	return out
 }

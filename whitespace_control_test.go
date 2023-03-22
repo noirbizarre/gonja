@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/nikolalohinski/gonja"
@@ -13,26 +15,16 @@ import (
 	tu "github.com/nikolalohinski/gonja/testutils"
 )
 
-var testCases = []struct {
-	name                  string
-	trim_blocks           bool
-	lstrip_blocks         bool
-	keep_trailing_newline bool
-}{
-	{"default", false, false, false},
-	{"trim_blocks", true, false, false},
-	{"lstrip_blocks", false, true, false},
-	{"keep_trailing_newline", false, false, true},
-	{"all", true, true, true},
-}
-
-const source = "testData/whitespaces/source.tpl"
-const result = "testData/whitespaces/%s.out"
-
 func TestWhiteSpace(t *testing.T) {
-	for _, tc := range testCases {
-		test := tc
-		t.Run(test.name, func(t *testing.T) {
+	files, err := filepath.Glob("testData/whitspace/*.tpl")
+	if err != nil {
+		panic(err)
+	}
+	for _, path := range files {
+		source := path
+		result := path + ".out"
+		name := strings.TrimSuffix(filepath.Base(source), ".tpl")
+		t.Run(name, func(t *testing.T) {
 			defer func() {
 				if err := recover(); err != nil {
 					t.Error(err)
@@ -40,15 +32,12 @@ func TestWhiteSpace(t *testing.T) {
 			}()
 			cfg := config.NewConfig()
 			env := gonja.NewEnvironment(cfg, gonja.DefaultLoader)
-			env.TrimBlocks = test.trim_blocks
-			env.LstripBlocks = test.lstrip_blocks
-			env.KeepTrailingNewline = test.keep_trailing_newline
 
 			tpl, err := env.FromFile(source)
 			if err != nil {
 				t.Fatalf("Error on FromFile('%s'): %s", source, err.Error())
 			}
-			output := fmt.Sprintf(result, test.name)
+			output := fmt.Sprintf(result, name)
 			expected, rerr := ioutil.ReadFile(output)
 			if rerr != nil {
 				t.Fatalf("Error on ReadFile('%s'): %s", output, rerr.Error())
