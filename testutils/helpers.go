@@ -21,7 +21,6 @@ import (
 
 func TestEnv(root string) *gonja.Environment {
 	cfg := gonja.NewConfig()
-	cfg.KeepTrailingNewline = true
 	loader := loaders.MustNewFileSystemLoader(root)
 	env := gonja.NewEnvironment(cfg, loader)
 	env.Autoescape = true
