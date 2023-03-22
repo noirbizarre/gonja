@@ -48,9 +48,9 @@ func (node *FilterStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) err
 		}
 	}
 
-	r.WriteString(value.String())
+	_, err = r.Out.WriteString(value.String())
 
-	return nil
+	return err
 }
 
 func filterParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {

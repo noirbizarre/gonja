@@ -35,4 +35,3 @@ Trim everything:
     {% if true %}LStrip ?{% endif %}
 !   {% if true %}LStrip with char?{% endif %}
 ---
-

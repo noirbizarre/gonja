@@ -157,17 +157,16 @@ func (p *Parser) WrapUntil(names ...string) (*nodes.Wrapper, *Parser, error) {
 
 			if endTag != nil {
 				p.Consume()
-				wrapper.Trim.Left = begin.Val[len(begin.Val)-1] == '-'
-
 				for {
 					if end := p.Match(tokens.BlockEnd); end != nil {
 						wrapper.EndTag = endTag.Val
-						wrapper.Trim.Right = end.Val[0] == '-'
+						if data := p.Current(tokens.Data); data != nil {
+							data.Trim = data.Trim || len(end.Val) > 0 && end.Val[0] == '-'
+						}
 						stream := tokens.NewStream(args)
 						return wrapper, NewParser(p.Name, p.Config, stream), nil
 					}
 					t := p.Next()
-					// p.Consume()
 					if t == nil {
 						return nil, nil, p.Error("Unexpected EOF.", p.Current())
 					}
@@ -187,47 +186,4 @@ func (p *Parser) WrapUntil(names ...string) (*nodes.Wrapper, *Parser, error) {
 
 	return nil, nil, p.Error(fmt.Sprintf("Unexpected EOF, expected tag %s.", strings.Join(names, " or ")),
 		p.Current())
-}
-
-// Skips all nodes between starting tag and "{% endtag %}"
-func (p *Parser) SkipUntil(names ...string) error {
-	for !p.End() {
-		// New tag, check whether we have to stop wrapping here
-		if p.Match(tokens.BlockBegin) != nil {
-			ident := p.Current(tokens.Name)
-
-			if ident != nil {
-				// We've found a (!) end-tag
-
-				found := false
-				for _, n := range names {
-					if ident.Val == n {
-						found = true
-						break
-					}
-				}
-
-				// We only process the tag if we've found an end tag
-				if found {
-					// Okay, endtag found.
-					p.Consume() // '{%' tagname
-
-					for {
-						if p.Match(tokens.BlockEnd) != nil {
-							// Done skipping, exit.
-							return nil
-						}
-					}
-				}
-			} else {
-				p.Stream.Backup()
-			}
-		}
-		t := p.Next()
-		if t == nil {
-			return p.Error("Unexpected EOF.", p.Current())
-		}
-	}
-
-	return p.Error(fmt.Sprintf("Unexpected EOF, expected tag %s.", strings.Join(names, " or ")), p.Current())
 }

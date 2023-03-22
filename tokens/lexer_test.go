@@ -348,11 +348,11 @@ func TestLexerPosition(t *testing.T) {
 	go lexer.Run()
 	toks := tokenSlice(lexer.Tokens)
 	assert.Equal([]*tokens.Token{
-		&tokens.Token{tokens.Data, "Hello\n", 0, 1, 1},
-		&tokens.Token{tokens.CommentBegin, "{#", 6, 2, 1},
-		&tokens.Token{tokens.Data, "\n    Multiline comment\n", 8, 2, 3},
-		&tokens.Token{tokens.CommentEnd, "#}", 31, 4, 1},
-		&tokens.Token{tokens.Data, "\nWorld\n", 33, 4, 3},
-		&tokens.Token{tokens.EOF, "", 40, 6, 1},
+		{tokens.Data, "Hello\n", 0, 1, 1, false},
+		{tokens.CommentBegin, "{#", 6, 2, 1, false},
+		{tokens.Data, "\n    Multiline comment\n", 8, 2, 3, false},
+		{tokens.CommentEnd, "#}", 31, 4, 1, false},
+		{tokens.Data, "\nWorld\n", 33, 4, 3, false},
+		{tokens.EOF, "", 40, 6, 1, false},
 	}, toks)
 }

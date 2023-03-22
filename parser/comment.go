@@ -21,7 +21,6 @@ func (p *Parser) ParseComment() (*nodes.Comment, error) {
 
 	comment := &nodes.Comment{
 		Start: tok,
-		Trim:  &nodes.Trim{},
 	}
 
 	tok = p.Match(tokens.Data)
@@ -37,6 +36,9 @@ func (p *Parser) ParseComment() (*nodes.Comment, error) {
 		return nil, p.Error(msg, p.Current())
 	}
 	comment.End = tok
+	if data := p.Current(tokens.Data); data != nil {
+		data.Trim = data.Trim || len(comment.End.Val) > 0 && comment.End.Val[0] == '-'
+	}
 
 	log.WithFields(log.Fields{
 		"node": comment,

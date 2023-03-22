@@ -7,14 +7,22 @@ import (
 
 type TemplateParser func(string) (*nodes.Template, error)
 
-// Doc = { ( Filter | Tag | HTML ) }
 func (p *Parser) parseDocElement() (nodes.Node, error) {
 	t := p.Current()
-
 	switch t.Type {
 	case tokens.Data:
-		n := &nodes.Data{Data: t}
-		p.Consume() // consume HTML element
+		n := &nodes.Data{
+			Data: t,
+			Trim: nodes.Trim{
+				Left: t.Trim,
+			},
+		}
+		if next := p.Peek(tokens.VariableBegin, tokens.CommentBegin, tokens.BlockBegin); next != nil {
+			if len(next.Val) > 0 && next.Val[len(next.Val)-1] == '-' {
+				n.Trim.Right = true
+			}
+		}
+		p.Consume()
 		return n, nil
 	case tokens.EOF:
 		p.Consume()

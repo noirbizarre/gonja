@@ -21,16 +21,8 @@ func (stmt *RawStmt) String() string {
 }
 
 func (stmt *RawStmt) Execute(r *exec.Renderer, tag *nodes.StatementBlock) error {
-	r.WriteString(stmt.Data.Data.Val)
-	// sub := r.Inherit()
-	// sub.Autoescape = stmt.Autoescape
-
-	// err := sub.ExecuteWrapper(stmt.Wrapper)
-	// if err != nil {
-	// 	return err
-	// }
-
-	return nil
+	_, err := r.Out.WriteString(stmt.Data.Data.Val)
+	return err
 }
 
 func rawParser(p *parser.Parser, args *parser.Parser) (nodes.Statement, error) {
