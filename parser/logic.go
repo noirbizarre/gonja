@@ -64,7 +64,7 @@ func (p *Parser) parseOr() (nodes.Expression, error) {
 		return nil, err
 	}
 
-	for p.PeekName("or") != nil {
+	for p.CurrentName("or") != nil {
 		op := BinOp(p.Pop())
 		right, err := p.parseAnd()
 		if err != nil {
@@ -95,7 +95,7 @@ func (p *Parser) parseAnd() (nodes.Expression, error) {
 		return nil, err
 	}
 
-	for p.PeekName("and") != nil {
+	for p.CurrentName("and") != nil {
 		op := BinOp(p.Pop())
 		// binExpr :=
 
@@ -154,7 +154,7 @@ func (p *Parser) parseCompare() (nodes.Expression, error) {
 	}
 
 	// for p.PeekOne(TokenKeyword, "in", "not in") != nil || p.PeekOne(TokenSymbol, "==", "<=", ">=", "!=", "<>", ">", "<") != nil {
-	for p.Peek(compareOps...) != nil || p.PeekName("in", "not") != nil {
+	for p.Current(compareOps...) != nil || p.CurrentName("in", "not") != nil {
 
 		op := p.Pop()
 		// if op = p.MatchOne(TokenKeyword, "in", "not in"); op == nil {

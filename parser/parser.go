@@ -32,20 +32,6 @@ type Parser struct {
 // Creates a new parser to parse tokens.
 // Used inside gonja to parse documents and to provide an easy-to-use
 // parser for tag authors
-// func NewParser(name string, tokens []*tokens.Token) *Parser {
-// 	p := &Parser{
-// 		name:          name,
-// 		tokens:        tokens,
-// 		template:      template,
-// 		// bannedStmts:   make(map[string]bool),
-// 		// bannedFilters: make(map[string]bool),
-// 	}
-// 	if len(tokens) > 0 {
-// 		p.lastToken = tokens[len(tokens)-1]
-// 	}
-// 	return p
-// }
-
 func NewParser(name string, cfg *config.Config, stream *tokens.Stream) *Parser {
 	return &Parser{
 		Name:   name,
@@ -61,38 +47,12 @@ func Parse(input string) (*nodes.Template, error) {
 }
 
 func (p *Parser) Parse() (*nodes.Template, error) {
-	// for p.state = parseProg; p.state != nil; {
-	// 	p.state = p.state(p)
-	// }
-
-	// lex everything
-	// t := p.Lexer.NextItem()
-	// for ; t.Typ != lex.EOF; t = p.Lexer.NextItem() {
-	// 	p.Items = append(p.Items, t)
-	// }
-	// p.Items = append(p.Items, t)
-
-	// tokens := []*l.Token{}
-	// for token := range p.Tokens {
-	// 	p.tokens = append(p.tokens, token)
-	// }
-
 	return p.ParseTemplate()
 }
 
 // Consume one token. It will be gone forever.
 func (p *Parser) Consume() {
 	p.Stream.Next()
-}
-
-// // Consume N tokens. They will be gone forever.
-// func (p *Parser) ConsumeN(count int) {
-// 	p.idx += count
-// }
-
-// Current returns the current token.
-func (p *Parser) Current() *tokens.Token {
-	return p.Stream.Current()
 }
 
 // Next returns and consume the current token
@@ -121,7 +81,7 @@ func (p *Parser) Match(types ...tokens.Type) *tokens.Token {
 }
 
 func (p *Parser) MatchName(names ...string) *tokens.Token {
-	t := p.Peek(tokens.Name)
+	t := p.Current(tokens.Name)
 	if t != nil {
 		for _, name := range names {
 			if t.Val == name {
@@ -129,7 +89,6 @@ func (p *Parser) MatchName(names ...string) *tokens.Token {
 			}
 		}
 	}
-	// if t != nil && t.Val == name { return p.Pop() }
 	return nil
 }
 
@@ -140,10 +99,13 @@ func (p *Parser) Pop() *tokens.Token {
 	return t
 }
 
-// Peek returns the next token without consuming the current
-// if it matches one of the given types
-func (p *Parser) Peek(types ...tokens.Type) *tokens.Token {
+// Current returns the current token without consuming
+// it and only if it matches one of the given types
+func (p *Parser) Current(types ...tokens.Type) *tokens.Token {
 	tok := p.Stream.Current()
+	if types == nil {
+		return tok
+	}
 	for _, t := range types {
 		if tok.Type == t {
 			return tok
@@ -152,8 +114,21 @@ func (p *Parser) Peek(types ...tokens.Type) *tokens.Token {
 	return nil
 }
 
-func (p *Parser) PeekName(names ...string) *tokens.Token {
-	t := p.Peek(tokens.Name)
+func (p *Parser) Peek(types ...tokens.Type) *tokens.Token {
+	tok := p.Stream.Peek()
+	if types == nil {
+		return tok
+	}
+	for _, t := range types {
+		if tok.Type == t {
+			return tok
+		}
+	}
+	return nil
+}
+
+func (p *Parser) CurrentName(names ...string) *tokens.Token {
+	t := p.Current(tokens.Name)
 	if t != nil {
 		for _, name := range names {
 			if t.Val == name {
@@ -161,7 +136,6 @@ func (p *Parser) PeekName(names ...string) *tokens.Token {
 			}
 		}
 	}
-	// if t != nil && t.Val == name { return t }
 	return nil
 }
 
@@ -179,41 +153,25 @@ func (p *Parser) WrapUntil(names ...string) (*nodes.Wrapper, *Parser, error) {
 	for !p.Stream.End() {
 		// New tag, check whether we have to stop wrapping here
 		if begin := p.Match(tokens.BlockBegin); begin != nil {
-			ident := p.Peek(tokens.Name)
+			endTag := p.CurrentName(names...)
 
-			if ident != nil {
-				// We've found a (!) end-tag
+			if endTag != nil {
+				p.Consume()
+				wrapper.Trim.Left = begin.Val[len(begin.Val)-1] == '-'
 
-				found := false
-				for _, n := range names {
-					if ident.Val == n {
-						found = true
-						break
+				for {
+					if end := p.Match(tokens.BlockEnd); end != nil {
+						wrapper.EndTag = endTag.Val
+						wrapper.Trim.Right = end.Val[0] == '-'
+						stream := tokens.NewStream(args)
+						return wrapper, NewParser(p.Name, p.Config, stream), nil
 					}
-				}
-
-				// We only process the tag if we've found an end tag
-				if found {
-					// Okay, endtag found.
-					p.Consume() // '{%' tagname
-					wrapper.Trim.Left = begin.Val[len(begin.Val)-1] == '-'
-					wrapper.LStrip = begin.Val[len(begin.Val)-1] == '+'
-
-					for {
-						if end := p.Match(tokens.BlockEnd); end != nil {
-							// Okay, end the wrapping here
-							wrapper.EndTag = ident.Val
-							wrapper.Trim.Right = end.Val[0] == '-'
-							stream := tokens.NewStream(args)
-							return wrapper, NewParser(p.Name, p.Config, stream), nil
-						}
-						t := p.Next()
-						// p.Consume()
-						if t == nil {
-							return nil, nil, p.Error("Unexpected EOF.", p.Current())
-						}
-						args = append(args, t)
+					t := p.Next()
+					// p.Consume()
+					if t == nil {
+						return nil, nil, p.Error("Unexpected EOF.", p.Current())
 					}
+					args = append(args, t)
 				}
 			}
 			p.Stream.Backup()
@@ -236,7 +194,7 @@ func (p *Parser) SkipUntil(names ...string) error {
 	for !p.End() {
 		// New tag, check whether we have to stop wrapping here
 		if p.Match(tokens.BlockBegin) != nil {
-			ident := p.Peek(tokens.Name)
+			ident := p.Current(tokens.Name)
 
 			if ident != nil {
 				// We've found a (!) end-tag
