@@ -105,7 +105,7 @@ func (p *Parser) ParseFilter() (*nodes.FilterCall, error) {
 
 	// Check for filter-argument (2 tokens needed: ':' ARG)
 	if p.Match(tokens.Lparen) != nil {
-		if p.Peek(tokens.VariableEnd) != nil {
+		if p.Current(tokens.VariableEnd) != nil {
 			return nil, p.Error("Filter parameter required after '('.", nil)
 		}
 

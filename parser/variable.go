@@ -97,7 +97,7 @@ func (p *Parser) parseList() (nodes.Expression, error) {
 	list := []nodes.Expression{expr}
 
 	for p.Match(tokens.Comma) != nil {
-		if p.Peek(tokens.Rbracket) != nil {
+		if p.Current(tokens.Rbracket) != nil {
 			// Trailing coma
 			break
 		}
@@ -135,7 +135,7 @@ func (p *Parser) parseTuple() (nodes.Expression, error) {
 	trailingComa := false
 
 	for p.Match(tokens.Comma) != nil {
-		if p.Peek(tokens.Rparen) != nil {
+		if p.Current(tokens.Rparen) != nil {
 			// Trailing coma
 			trailingComa = true
 			break
@@ -198,7 +198,7 @@ func (p *Parser) parseDict() (nodes.Expression, error) {
 		Pairs: []*nodes.Pair{},
 	}
 
-	if p.Peek(tokens.Rbrace) == nil {
+	if p.Current(tokens.Rbrace) == nil {
 		pair, err := p.parsePair()
 		if err != nil {
 			return nil, err

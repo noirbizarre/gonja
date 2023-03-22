@@ -41,7 +41,7 @@ func (p *Parser) ParseStatement() (nodes.Statement, error) {
 	// }
 
 	var args []*tokens.Token
-	for p.Peek(tokens.BlockEnd) == nil && !p.Stream.End() {
+	for p.Current(tokens.BlockEnd) == nil && !p.Stream.End() {
 		// Add token to args
 		args = append(args, p.Next())
 		// p.Consume() // next token
@@ -99,7 +99,7 @@ func (p *Parser) ParseStatementBlock() (*nodes.StatementBlock, error) {
 
 	log.Trace("args")
 	var args []*tokens.Token
-	for p.Peek(tokens.BlockEnd) == nil && !p.Stream.End() {
+	for p.Current(tokens.BlockEnd) == nil && !p.Stream.End() {
 		log.Trace("for args")
 		// Add token to args
 		args = append(args, p.Next())

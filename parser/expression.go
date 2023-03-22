@@ -12,7 +12,7 @@ func (p *Parser) ParseFilterExpression(expr nodes.Expression) (nodes.Expression,
 		"current": p.Current(),
 	}).Trace("ParseFilterExpression")
 
-	if p.Peek(tokens.Pipe) != nil {
+	if p.Current(tokens.Pipe) != nil {
 
 		filtered := &nodes.FilteredExpression{
 			Expression: expr,
