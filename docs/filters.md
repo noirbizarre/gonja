@@ -406,6 +406,7 @@ Return a random item from the sequence.
 ### The `rejectattr` filter
 | 🐍 `python` |
 |-------------|
+
 Filters a sequence of objects by applying a test to the specified attribute of each object, and rejecting the objects with the test succeeding.
 
 If no test is specified, the attribute’s value will be evaluated as a boolean.
@@ -476,6 +477,7 @@ If no test is specified, the attribute’s value will be evaluated as a boolean.
 
 | 🐍 `python` |
 |-------------|
+
 Filters a sequence of objects by applying a test to each object, and only selecting the objects with the test succeeding.
 
 If no test is specified, each object will be evaluated as a boolean.
