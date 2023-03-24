@@ -3,7 +3,6 @@ module github.com/nikolalohinski/gonja
 go 1.20
 
 require (
-	github.com/bmuller/arrow v0.0.0-20180318014521-b14bfde8dff2
 	github.com/dustin/go-humanize v1.0.1
 	github.com/go-check/check v0.0.0-20180628173108-788fd7840127
 	github.com/goph/emperror v0.17.1
