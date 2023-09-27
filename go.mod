@@ -1,14 +1,12 @@
 module github.com/noirbizarre/gonja
 
-go 1.19
+go 1.21.1
 
 require (
-	github.com/bmuller/arrow v1.0.3
+	github.com/bmuller/arrow v1.0.4
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.4
 )
-
-replace github.com/stretchr/testify v1.8.0 => github.com/stretchr/testify v1.8.2
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
